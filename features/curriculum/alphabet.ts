@@ -1,0 +1,219 @@
+import { ZWJ } from "@/lib/arabic";
+import type { Letter } from "./types";
+
+export const LETTERS: Letter[] = [
+  {
+    char: "ا",
+    name: "Alif",
+    sound: "long a, as in father",
+    joinsNext: false,
+    example: { ar: "أَسَد", tr: "asad", en: "lion" },
+  },
+  {
+    char: "ب",
+    name: "Baa",
+    sound: "b, as in bat",
+    joinsNext: true,
+    example: { ar: "بَيْت", tr: "bayt", en: "house" },
+  },
+  {
+    char: "ت",
+    name: "Taa",
+    sound: "t, as in tea",
+    joinsNext: true,
+    example: { ar: "تُفَّاح", tr: "tuffāḥ", en: "apples" },
+  },
+  {
+    char: "ث",
+    name: "Thaa",
+    sound: "th, as in think",
+    joinsNext: true,
+    example: { ar: "ثَوْر", tr: "thawr", en: "bull" },
+  },
+  {
+    char: "ج",
+    name: "Jeem",
+    sound: "j, as in jam",
+    joinsNext: true,
+    example: { ar: "جَمَل", tr: "jamal", en: "camel" },
+  },
+  {
+    char: "ح",
+    name: "Haa",
+    sound: "ḥ, a breathy h from the throat",
+    joinsNext: true,
+    example: { ar: "حَلِيب", tr: "ḥalīb", en: "milk" },
+  },
+  {
+    char: "خ",
+    name: "Khaa",
+    sound: "kh, like Scottish loch",
+    joinsNext: true,
+    example: { ar: "خُبْز", tr: "khubz", en: "bread" },
+  },
+  {
+    char: "د",
+    name: "Dal",
+    sound: "d, as in door",
+    joinsNext: false,
+    example: { ar: "دَجَاج", tr: "dajāj", en: "chicken" },
+  },
+  {
+    char: "ذ",
+    name: "Dhal",
+    sound: "dh, as in this",
+    joinsNext: false,
+    example: { ar: "ذُرَة", tr: "dhura", en: "corn" },
+  },
+  {
+    char: "ر",
+    name: "Raa",
+    sound: "r, a rolled r",
+    joinsNext: false,
+    example: { ar: "رَجُل", tr: "rajul", en: "man" },
+  },
+  {
+    char: "ز",
+    name: "Zay",
+    sound: "z, as in zoo",
+    joinsNext: false,
+    example: { ar: "زَهْرَة", tr: "zahra", en: "flower" },
+  },
+  {
+    char: "س",
+    name: "Seen",
+    sound: "s, as in sun",
+    joinsNext: true,
+    example: { ar: "سَمَك", tr: "samak", en: "fish" },
+  },
+  {
+    char: "ش",
+    name: "Sheen",
+    sound: "sh, as in ship",
+    joinsNext: true,
+    example: { ar: "شَمْس", tr: "shams", en: "sun" },
+  },
+  {
+    char: "ص",
+    name: "Saad",
+    sound: "ṣ, a heavy s",
+    joinsNext: true,
+    example: { ar: "صَبَاح", tr: "ṣabāḥ", en: "morning" },
+  },
+  {
+    char: "ض",
+    name: "Daad",
+    sound: "ḍ, a heavy d",
+    joinsNext: true,
+    example: { ar: "ضِفْدَع", tr: "ḍifdaʿ", en: "frog" },
+  },
+  {
+    char: "ط",
+    name: "Taa (heavy)",
+    sound: "ṭ, a heavy t",
+    joinsNext: true,
+    example: { ar: "طَائِر", tr: "ṭāʾir", en: "bird" },
+  },
+  {
+    char: "ظ",
+    name: "Zaa (heavy)",
+    sound: "ẓ, a heavy dh",
+    joinsNext: true,
+    example: { ar: "ظَرْف", tr: "ẓarf", en: "envelope" },
+  },
+  {
+    char: "ع",
+    name: "Ayn",
+    sound: "ʿ, a deep throat sound",
+    joinsNext: true,
+    example: { ar: "عَيْن", tr: "ʿayn", en: "eye" },
+  },
+  {
+    char: "غ",
+    name: "Ghayn",
+    sound: "gh, like a gargled r",
+    joinsNext: true,
+    example: { ar: "غُرْفَة", tr: "ghurfa", en: "room" },
+  },
+  {
+    char: "ف",
+    name: "Faa",
+    sound: "f, as in fan",
+    joinsNext: true,
+    example: { ar: "فِيل", tr: "fīl", en: "elephant" },
+  },
+  {
+    char: "ق",
+    name: "Qaaf",
+    sound: "q, a deep k from the throat",
+    joinsNext: true,
+    example: { ar: "قَمَر", tr: "qamar", en: "moon" },
+  },
+  {
+    char: "ك",
+    name: "Kaaf",
+    sound: "k, as in kite",
+    joinsNext: true,
+    example: { ar: "كِتَاب", tr: "kitāb", en: "book" },
+  },
+  {
+    char: "ل",
+    name: "Laam",
+    sound: "l, as in lamp",
+    joinsNext: true,
+    example: { ar: "لَيْمُون", tr: "laymūn", en: "lemon" },
+  },
+  {
+    char: "م",
+    name: "Meem",
+    sound: "m, as in moon",
+    joinsNext: true,
+    example: { ar: "مَاء", tr: "māʾ", en: "water" },
+  },
+  {
+    char: "ن",
+    name: "Noon",
+    sound: "n, as in night",
+    joinsNext: true,
+    example: { ar: "نَجْمَة", tr: "najma", en: "star" },
+  },
+  {
+    char: "ه",
+    name: "Haa (soft)",
+    sound: "h, as in hat",
+    joinsNext: true,
+    example: { ar: "هِلَال", tr: "hilāl", en: "crescent" },
+  },
+  {
+    char: "و",
+    name: "Waaw",
+    sound: "w, or long oo",
+    joinsNext: false,
+    example: { ar: "وَرْدَة", tr: "warda", en: "rose" },
+  },
+  {
+    char: "ي",
+    name: "Yaa",
+    sound: "y, or long ee",
+    joinsNext: true,
+    example: { ar: "يَد", tr: "yad", en: "hand" },
+  },
+];
+
+export interface LetterForms {
+  isolated: string;
+  initial: string;
+  medial: string;
+  final: string;
+}
+
+/** Joining is requested with ZWJ so the browser's shaping engine picks the right glyph. */
+export function letterForms(letter: Letter): LetterForms {
+  const { char, joinsNext } = letter;
+  return {
+    isolated: char,
+    initial: joinsNext ? `${char}${ZWJ}` : char,
+    medial: joinsNext ? `${ZWJ}${char}${ZWJ}` : `${ZWJ}${char}`,
+    final: `${ZWJ}${char}`,
+  };
+}
