@@ -254,7 +254,8 @@ export function SpeakingDrill({ word, onRate, onSkip }: SpeakingDrillProps) {
             )}
             <p className="text-muted-foreground mt-1 text-xs">
               The browser’s recogniser often mishears learners, so you decide
-              how it went.
+              how it went. To check pronunciation, your browser may send the
+              recording to its speech service.
             </p>
           </div>
         </div>

@@ -41,6 +41,11 @@ function subscribe(listener: () => void) {
   };
 }
 
+/** Non-hook read of the current state, for event handlers and tests. */
+export function getProgress(): ProgressState {
+  return current();
+}
+
 /** Null on the server and during hydration, so callers render skeletons. */
 export function useProgress(): ProgressState | null {
   return useSyncExternalStore(subscribe, current, () => null);
@@ -153,17 +158,24 @@ export const progressActions = {
     commit({ ...s, practice: patchPractice(s, today, patch) });
   },
 
-  /** Rates a spoken drill: schedules the card and counts the drill for today. */
+  /**
+   * Counts a spoken drill. The card is only rescheduled when it already exists and is due, so a
+   * word reviewed earlier today is not scheduled twice and unstudied words never become cards.
+   */
   rateSpoken(wordId: string, rating: Rating) {
     const today = toDateKey();
     const s = current();
-    const card = s.cards[wordId] ?? newCard(today);
+    const card = s.cards[wordId];
+    const cards =
+      card && isDue(card, today)
+        ? { ...s.cards, [wordId]: review(card, rating, today) }
+        : s.cards;
     const day = todayPractice(s, today);
     commit(
       withActivity(
         {
           ...s,
-          cards: { ...s.cards, [wordId]: review(card, rating, today) },
+          cards,
           practice: patchPractice(s, today, { spoken: day.spoken + 1 }),
         },
         today,

@@ -5,8 +5,6 @@ export interface Scenario {
   summary: string;
   task: string;
   wordIds: readonly string[];
-  /** Lessons the vocabulary comes from, shown as a hint. */
-  fromDays: readonly number[];
 }
 
 export const SCENARIOS: readonly Scenario[] = [
@@ -27,7 +25,6 @@ export const SCENARIOS: readonly Scenario[] = [
       "d11w8",
       "d10w1",
     ],
-    fromDays: [9, 10, 11],
   },
   {
     id: "cafe",
@@ -47,7 +44,6 @@ export const SCENARIOS: readonly Scenario[] = [
       "d12w2",
       "d12w3",
     ],
-    fromDays: [9, 12, 15, 24],
   },
   {
     id: "directions",
@@ -65,7 +61,6 @@ export const SCENARIOS: readonly Scenario[] = [
       "d21w8",
       "d9w6",
     ],
-    fromDays: [9, 18, 21],
   },
   {
     id: "market",
@@ -84,7 +79,6 @@ export const SCENARIOS: readonly Scenario[] = [
       "d14w1",
       "d14w3",
     ],
-    fromDays: [12, 14, 15, 24],
   },
 ];
 
