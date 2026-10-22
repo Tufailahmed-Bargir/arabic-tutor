@@ -26,6 +26,18 @@ export const progressSchema = z.object({
     showTranslit: z.boolean(),
   }),
   talkSessions: z.number(),
+  // Added after v1 shipped: defaults keep progress saved by earlier builds intact.
+  practice: z
+    .record(
+      z.string(),
+      z.object({
+        reviewDone: z.boolean().default(false),
+        speakDone: z.boolean().default(false),
+        talkDone: z.boolean().default(false),
+        spoken: z.number().default(0),
+      }),
+    )
+    .default({}),
 });
 
 export type ProgressState = z.infer<typeof progressSchema>;
@@ -41,15 +53,24 @@ export function createInitialState(): ProgressState {
     activity: {},
     prefs: { showHarakat: true, showTranslit: true },
     talkSessions: 0,
+    practice: {},
   };
+}
+
+/** Parses a stored blob; anything unreadable falls back to a fresh state. */
+export function parseState(raw: string | null): ProgressState {
+  if (!raw) return createInitialState();
+  try {
+    const parsed = progressSchema.safeParse(JSON.parse(raw));
+    return parsed.success ? parsed.data : createInitialState();
+  } catch {
+    return createInitialState();
+  }
 }
 
 export function loadState(): ProgressState {
   try {
-    const raw = window.localStorage.getItem(STORAGE_KEY);
-    if (!raw) return createInitialState();
-    const parsed = progressSchema.safeParse(JSON.parse(raw));
-    return parsed.success ? parsed.data : createInitialState();
+    return parseState(window.localStorage.getItem(STORAGE_KEY));
   } catch {
     return createInitialState();
   }

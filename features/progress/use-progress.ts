@@ -62,6 +62,31 @@ function withActivity(s: ProgressState, today: string): ProgressState {
   };
 }
 
+export type PracticeDay = ProgressState["practice"][string];
+
+const EMPTY_PRACTICE: PracticeDay = {
+  reviewDone: false,
+  speakDone: false,
+  talkDone: false,
+  spoken: 0,
+};
+
+export function todayPractice(s: ProgressState, today: string): PracticeDay {
+  return s.practice[today] ?? EMPTY_PRACTICE;
+}
+
+function patchPractice(
+  s: ProgressState,
+  today: string,
+  patch: Partial<PracticeDay>,
+): ProgressState["practice"] {
+  return { ...s.practice, [today]: { ...todayPractice(s, today), ...patch } };
+}
+
+export function isPracticeComplete(day: PracticeDay): boolean {
+  return day.reviewDone && day.speakDone && day.talkDone;
+}
+
 export const progressActions = {
   completeLesson(day: number, score: number) {
     const lesson = getLesson(day);
@@ -109,7 +134,41 @@ export const progressActions = {
   recordTalkSession() {
     const today = toDateKey();
     const s = current();
-    commit(withActivity({ ...s, talkSessions: s.talkSessions + 1 }, today));
+    commit(
+      withActivity(
+        {
+          ...s,
+          talkSessions: s.talkSessions + 1,
+          practice: patchPractice(s, today, { talkDone: true }),
+        },
+        today,
+      ),
+    );
+  },
+
+  /** Updates today's daily-practice checklist. */
+  updatePractice(patch: Partial<PracticeDay>) {
+    const today = toDateKey();
+    const s = current();
+    commit({ ...s, practice: patchPractice(s, today, patch) });
+  },
+
+  /** Rates a spoken drill: schedules the card and counts the drill for today. */
+  rateSpoken(wordId: string, rating: Rating) {
+    const today = toDateKey();
+    const s = current();
+    const card = s.cards[wordId] ?? newCard(today);
+    const day = todayPractice(s, today);
+    commit(
+      withActivity(
+        {
+          ...s,
+          cards: { ...s.cards, [wordId]: review(card, rating, today) },
+          practice: patchPractice(s, today, { spoken: day.spoken + 1 }),
+        },
+        today,
+      ),
+    );
   },
 
   reset() {

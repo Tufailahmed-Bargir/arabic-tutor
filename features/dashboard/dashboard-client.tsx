@@ -22,6 +22,7 @@ import {
 import { toDateKey } from "@/lib/date";
 import { cn } from "@/lib/utils";
 import { ActivityHeatmap } from "./activity-heatmap";
+import { PracticeCard } from "./practice-card";
 import { ProgressRing } from "./progress-ring";
 import { greeting, liveStreak } from "./stats";
 
@@ -75,6 +76,8 @@ export function DashboardClient() {
           className="text-emerald-600 dark:text-emerald-400"
         />
       </header>
+
+      <PracticeCard progress={progress} today={today} />
 
       <Card className="via-card to-card relative overflow-hidden bg-gradient-to-br from-emerald-500/10">
         <CardHeader>
@@ -248,6 +251,25 @@ export function DashboardClient() {
           </CardContent>
         </Card>
       </div>
+
+      <nav
+        aria-label="More"
+        className="text-muted-foreground flex items-center justify-center gap-4 pt-2 text-sm"
+      >
+        <Link
+          href="/alphabet"
+          className="hover:text-foreground underline-offset-4 hover:underline"
+        >
+          Alphabet
+        </Link>
+        <span aria-hidden>·</span>
+        <Link
+          href="/settings"
+          className="hover:text-foreground underline-offset-4 hover:underline"
+        >
+          Settings
+        </Link>
+      </nav>
     </div>
   );
 }

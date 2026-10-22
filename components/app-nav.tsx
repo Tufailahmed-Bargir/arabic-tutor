@@ -6,6 +6,7 @@ import {
   BookOpen,
   GraduationCap,
   LayoutDashboard,
+  Dumbbell,
   Layers,
   Languages,
   Mic,
@@ -23,12 +24,13 @@ interface NavItem {
 const PRIMARY: NavItem[] = [
   { href: "/dashboard", label: "Today", icon: LayoutDashboard },
   { href: "/learn", label: "Lessons", icon: GraduationCap },
+  { href: "/practice", label: "Practice", icon: Dumbbell },
   { href: "/talk", label: "Talk", icon: Mic },
   { href: "/review", label: "Review", icon: Layers },
-  { href: "/alphabet", label: "Alphabet", icon: Languages },
 ];
 
 const SECONDARY: NavItem[] = [
+  { href: "/alphabet", label: "Alphabet", icon: Languages },
   { href: "/settings", label: "Settings", icon: Settings },
 ];
 

@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { ConversationProvider } from "@elevenlabs/react";
 import {
   AlertTriangle,
@@ -17,14 +17,27 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useProgress } from "@/features/progress/use-progress";
-import { buildTalkContext, type TalkContext } from "./lesson-context";
+import {
+  buildTalkContext,
+  listTopics,
+  type TalkContext,
+} from "./lesson-context";
 import { MicOrb, orbLabel, type OrbState } from "./mic-orb";
 import { TextComposer } from "./text-composer";
 import { Transcript } from "./transcript";
 import { useTalkSession, type TalkError } from "./use-talk-session";
 
-function LessonContextCard({ context }: { context: TalkContext }) {
-  const { lesson } = context;
+function TopicCard({
+  context,
+  topics,
+  disabled,
+  onChange,
+}: {
+  context: TalkContext;
+  topics: ReturnType<typeof listTopics>;
+  disabled: boolean;
+  onChange: (id: string) => void;
+}) {
   return (
     <Card>
       <CardHeader>
@@ -34,21 +47,53 @@ function LessonContextCard({ context }: { context: TalkContext }) {
               className="text-muted-foreground size-4"
               aria-hidden="true"
             />
-            Today&apos;s focus
+            Practise
           </CardTitle>
-          <Badge variant="secondary">Day {lesson.day}</Badge>
+          <Badge variant="secondary">{context.badge}</Badge>
         </div>
       </CardHeader>
-      <CardContent className="space-y-3">
+      <CardContent className="space-y-4">
+        <div className="space-y-1.5">
+          <label htmlFor="talk-topic" className="text-sm font-medium">
+            Topic
+          </label>
+          <select
+            id="talk-topic"
+            value={context.topic.id}
+            disabled={disabled}
+            onChange={(e) => onChange(e.target.value)}
+            className="border-input bg-background focus-visible:ring-ring/50 h-9 w-full rounded-lg border px-2.5 text-sm outline-none focus-visible:ring-3 disabled:cursor-not-allowed disabled:opacity-60"
+          >
+            <optgroup label="Lessons">
+              {topics.lessons.map((t) => (
+                <option key={t.id} value={t.id}>
+                  {t.label}
+                </option>
+              ))}
+            </optgroup>
+            <optgroup label="Role-plays">
+              {topics.scenarios.map((t) => (
+                <option key={t.id} value={t.id}>
+                  {t.label}
+                </option>
+              ))}
+            </optgroup>
+          </select>
+          {disabled && (
+            <p className="text-muted-foreground text-xs">
+              End the session to change topic.
+            </p>
+          )}
+        </div>
         <div>
-          <p className="font-medium">{lesson.title}</p>
-          <p className="text-muted-foreground text-sm">{lesson.objective}</p>
+          <p className="font-medium">{context.heading}</p>
+          <p className="text-muted-foreground text-sm">{context.summary}</p>
         </div>
         <ul
           className="flex flex-wrap gap-2"
           aria-label="Words your tutor will practise"
         >
-          {lesson.words.slice(0, 6).map((w) => (
+          {context.words.slice(0, 6).map((w) => (
             <li
               key={w.id}
               className="bg-muted/40 rounded-lg border px-2.5 py-1"
@@ -58,7 +103,7 @@ function LessonContextCard({ context }: { context: TalkContext }) {
           ))}
         </ul>
         <p className="text-muted-foreground text-xs">
-          Your tutor knows this lesson and will drill it with you.
+          Your tutor knows these words and will practise them with you.
         </p>
       </CardContent>
     </Card>
@@ -114,7 +159,15 @@ function ErrorPanel({
   );
 }
 
-function TalkSession({ context }: { context: TalkContext }) {
+function TalkSession({
+  context,
+  topics,
+  onTopicChange,
+}: {
+  context: TalkContext;
+  topics: ReturnType<typeof listTopics>;
+  onTopicChange: (id: string) => void;
+}) {
   const session = useTalkSession(context);
   const { status, mode, preparing, textOnly, isMuted, error } = session;
 
@@ -140,7 +193,12 @@ function TalkSession({ context }: { context: TalkContext }) {
   return (
     <div className="grid gap-6 lg:grid-cols-[minmax(0,20rem)_minmax(0,1fr)]">
       <aside className="space-y-4">
-        <LessonContextCard context={context} />
+        <TopicCard
+          context={context}
+          topics={topics}
+          disabled={busy}
+          onChange={onTopicChange}
+        />
       </aside>
 
       <section aria-label="Conversation" className="space-y-4">
@@ -245,19 +303,27 @@ function TalkSkeleton() {
 
 export function TalkClient() {
   const progress = useProgress();
+  const [topicId, setTopicId] = useState<string | null>(null);
+  const completed = progress?.completed;
+
   const context = useMemo(
-    () =>
-      progress
-        ? buildTalkContext(new Set(Object.keys(progress.completed).map(Number)))
-        : null,
-    [progress],
+    () => (completed ? buildTalkContext(completed, topicId) : null),
+    [completed, topicId],
+  );
+  const topics = useMemo(
+    () => (completed ? listTopics(completed) : null),
+    [completed],
   );
 
-  if (!context) return <TalkSkeleton />;
+  if (!context || !topics) return <TalkSkeleton />;
 
   return (
     <ConversationProvider>
-      <TalkSession context={context} />
+      <TalkSession
+        context={context}
+        topics={topics}
+        onTopicChange={setTopicId}
+      />
     </ConversationProvider>
   );
 }
