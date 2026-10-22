@@ -15,6 +15,7 @@ import {
 } from "@/components/ui/card";
 import { LETTERS, letterForms } from "@/features/curriculum/alphabet";
 import type { Lesson, Letter } from "@/features/curriculum/types";
+import { ListenThrough } from "@/features/learn/listen-through";
 
 interface LearnStepProps {
   lesson: Lesson;
@@ -102,10 +103,13 @@ export function LearnStep({ lesson, onContinue }: LearnStepProps) {
       )}
 
       <div className="space-y-3">
-        <h3 className="text-sm font-medium">
-          {letters.length > 0 ? "Example words" : "Words"}{" "}
-          <Badge variant="secondary">{lesson.words.length}</Badge>
-        </h3>
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <h3 className="text-sm font-medium">
+            {letters.length > 0 ? "Example words" : "Words"}{" "}
+            <Badge variant="secondary">{lesson.words.length}</Badge>
+          </h3>
+          <ListenThrough words={lesson.words} />
+        </div>
         <ul className="grid gap-2 sm:grid-cols-2">
           {lesson.words.map((word) => (
             <li
