@@ -47,7 +47,7 @@ export function SidebarNav() {
         <span className="bg-primary text-primary-foreground font-arabic grid size-8 place-items-center rounded-lg text-lg leading-none">
           ح
         </span>
-        Huruf
+        Ustadh
       </Link>
       <nav aria-label="Primary" className="flex flex-1 flex-col gap-1">
         {[...PRIMARY, ...SECONDARY].map(({ href, label, icon: Icon }) => {

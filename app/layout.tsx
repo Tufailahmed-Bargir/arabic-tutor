@@ -19,16 +19,16 @@ const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: {
-    default: "Huruf — Learn Arabic with daily lessons and a voice tutor",
-    template: "%s · Huruf",
+    default: "Ustadh — Learn Arabic with daily lessons and a voice tutor",
+    template: "%s · Ustadh",
   },
   description:
     "Learn Modern Standard Arabic from zero: daily lessons, the alphabet, spaced-repetition review and live voice conversations with an AI tutor.",
-  applicationName: "Huruf",
+  applicationName: "Ustadh",
   openGraph: {
     type: "website",
-    siteName: "Huruf",
-    title: "Huruf — Learn Arabic with daily lessons and a voice tutor",
+    siteName: "Ustadh",
+    title: "Ustadh — Learn Arabic with daily lessons and a voice tutor",
     description:
       "Daily Arabic lessons, written and spoken, with a voice tutor you can talk to.",
   },
