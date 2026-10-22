@@ -11,19 +11,38 @@ function stopCurrent() {
   }
 }
 
-function speakWithBrowser(text: string, rate: number): Promise<void> {
-  return new Promise((resolve, reject) => {
-    if (!("speechSynthesis" in window)) {
-      reject(new Error("Speech synthesis is not supported in this browser."));
-      return;
-    }
+function loadVoices(): Promise<SpeechSynthesisVoice[]> {
+  const synth = window.speechSynthesis;
+  const ready = synth.getVoices();
+  if (ready.length > 0) return Promise.resolve(ready);
+  // Chrome fills the voice list asynchronously, so wait for it with a timeout.
+  return new Promise((resolve) => {
+    const finish = () => {
+      synth.removeEventListener("voiceschanged", finish);
+      resolve(synth.getVoices());
+    };
+    synth.addEventListener("voiceschanged", finish);
+    setTimeout(finish, 1500);
+  });
+}
+
+async function speakWithBrowser(text: string, rate: number): Promise<void> {
+  if (!("speechSynthesis" in window)) {
+    throw new Error("Speech synthesis is not supported in this browser.");
+  }
+  const voices = await loadVoices();
+  const voice = voices.find((v) => v.lang.toLowerCase().startsWith("ar"));
+  if (!voice) {
+    throw new Error(
+      "No Arabic voice is installed. Add an ElevenLabs API key for Arabic audio, or install the Arabic speech pack in your system settings.",
+    );
+  }
+
+  await new Promise<void>((resolve, reject) => {
     const utterance = new SpeechSynthesisUtterance(text);
-    utterance.lang = "ar-SA";
+    utterance.lang = voice.lang;
+    utterance.voice = voice;
     utterance.rate = rate;
-    const voice = window.speechSynthesis
-      .getVoices()
-      .find((v) => v.lang.toLowerCase().startsWith("ar"));
-    if (voice) utterance.voice = voice;
     utterance.onend = () => resolve();
     utterance.onerror = () => reject(new Error("Could not play Arabic audio."));
     window.speechSynthesis.speak(utterance);

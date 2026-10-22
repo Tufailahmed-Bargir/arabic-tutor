@@ -8,11 +8,19 @@ export interface ChatMessage {
   pendingEcho?: boolean;
 }
 
+/** The agent's expressive TTS model emits cues like "[happy]" or "[slow]" that are not for reading. */
+export function stripAudioTags(text: string): string {
+  return text
+    .replace(/\[[^\]\n]{1,30}\]/g, "")
+    .replace(/[ \t]{2,}/g, " ")
+    .trim();
+}
+
 export function upsertMessage(
   messages: ChatMessage[],
   incoming: { id: string; role: ChatRole; text: string },
 ): ChatMessage[] {
-  const text = incoming.text.trim();
+  const text = stripAudioTags(incoming.text);
   if (!text) return messages;
 
   const existing = messages.findIndex((m) => m.id === incoming.id);
