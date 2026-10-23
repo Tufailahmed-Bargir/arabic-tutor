@@ -45,6 +45,8 @@ describe("quiz generation", () => {
           if (e.kind === "typing") {
             expect(e.answers.length).toBeGreaterThan(0);
             expect(e.answers.every((a) => a.length > 0)).toBe(true);
+            const gloss = e.reveal.en.replace(/\s*\([^)]*\)/g, "").trim();
+            expect(gloss.split(/\s+/).length).toBeLessThanOrEqual(3);
           }
         }
       }

@@ -28,7 +28,11 @@ function levelFor(completedCount: number): string {
     return "Absolute beginner, still learning the letters and sounds";
   if (completedCount < 16)
     return "Beginner, can read letters and knows basic phrases";
-  return "Advanced beginner, ready for short sentences";
+  if (completedCount < 31)
+    return "Advanced beginner, ready for short sentences";
+  if (completedCount < 45)
+    return "Elementary (A1), knows present-tense verbs and everyday topics";
+  return "Pre-intermediate (A2), can use past, future and negation; push for longer answers and opinions";
 }
 
 const lessonTopicId = (day: number) => `lesson-${day}`;

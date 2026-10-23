@@ -285,6 +285,18 @@ export function isTypingCorrect(
   );
 }
 
+const MAX_TYPED_WORDS = 3;
+
+/** Short glosses only: typing a whole sentence from memory is a recall test, not a typo test. */
+export function isTypable(word: Word): boolean {
+  if (/\([^)]*:/.test(word.en)) return false;
+  const bare = word.en.replace(/\s*\([^)]*\)/g, "").trim();
+  return (
+    acceptedAnswers(word.en).length > 0 &&
+    bare.split(/\s+/).length <= MAX_TYPED_WORDS
+  );
+}
+
 function typingExercise(word: Word): TypingExercise {
   return {
     kind: "typing",
@@ -348,12 +360,8 @@ export function buildQuiz(lesson: Lesson, seed: number): Exercise[] {
     ),
   );
 
-  const typable = words.filter(
-    (w) => acceptedAnswers(w.en).length > 0 && !/\([^)]*:/.test(w.en),
-  );
-  const typing = take(typable.length >= 3 ? typable : words, 2, 3).map(
-    typingExercise,
-  );
+  // Phrase lessons get fewer (or no) typing items rather than whole sentences to type.
+  const typing = take(words.filter(isTypable), 2, 3).map(typingExercise);
 
   return [
     ...shuffle([...choices, ...letterExercises], rng),

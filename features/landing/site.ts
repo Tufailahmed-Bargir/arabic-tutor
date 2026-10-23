@@ -24,7 +24,7 @@ export const FAQ = [
   {
     question: "Do I need to know any Arabic already?",
     answer:
-      "No. The course starts with the alphabet and the sounds, then builds up greetings, numbers, family, food, questions and useful phrases over daily lessons.",
+      "No. The course starts with the alphabet and the sounds, then moves through greetings, numbers, family and food to present, past and future verbs, shopping, travel, work, health and giving opinions. A phrasebook and speaking challenges help you practise real conversations.",
   },
   {
     question: "Can I speak with the tutor out loud?",
