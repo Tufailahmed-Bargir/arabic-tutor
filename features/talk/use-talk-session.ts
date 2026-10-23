@@ -77,6 +77,7 @@ export function useTalkSession(context: TalkContext) {
   const providerRef = useRef<VoiceProvider>("elevenlabs");
   const textOnlyRef = useRef(false);
   const resumingRef = useRef(false);
+  const agentSpokeRef = useRef(false);
   const localId = useRef(0);
 
   const switchProvider = useCallback((next: VoiceProvider) => {
@@ -102,6 +103,7 @@ export function useTalkSession(context: TalkContext) {
     onMessage: ({ message, role, event_id, response_id }) => {
       const id =
         role === "agent" ? (response_id ?? `e${event_id}`) : `e${event_id}`;
+      if (role === "agent") agentSpokeRef.current = true;
       setMessages((prev) => upsertMessage(prev, { id, role, text: message }));
     },
     onConnect: () => {
@@ -110,6 +112,17 @@ export function useTalkSession(context: TalkContext) {
     onError: (message) => {
       if (providerRef.current !== "elevenlabs") return;
       fallBackRef.current(describeSessionError(message));
+    },
+    // Over WebRTC a refused session (e.g. out of credits) only closes the room;
+    // onError never fires. An agent-side close before the tutor has spoken is that case.
+    onDisconnect: (details) => {
+      if (providerRef.current !== "elevenlabs" || details.reason === "user") {
+        return;
+      }
+      if (details.reason === "agent" && agentSpokeRef.current) return;
+      const detail =
+        details.reason === "error" ? details.message : details.closeReason;
+      fallBackRef.current(describeSessionError(detail ?? ""));
     },
   });
 
@@ -166,6 +179,7 @@ export function useTalkSession(context: TalkContext) {
         const session = sessionSchema.parse(await res.json());
 
         setMessages([]);
+        agentSpokeRef.current = false;
         if (session.mode === "gemini") {
           switchProvider("gemini");
           await startGemini(context.dynamicVariables, options.textOnly);
