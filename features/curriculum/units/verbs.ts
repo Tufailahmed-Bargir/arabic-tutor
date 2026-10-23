@@ -140,7 +140,7 @@ export const VERBS: Lesson[] = [
     words: words(43, [
       ["أَسْتَطِيعُ", "astaṭīʿu", "I can"],
       ["لَا أَسْتَطِيعُ", "lā astaṭīʿu", "I can't"],
-      ["يُمْكِنُ", "yumkinu", "it is possible"],
+      ["يُمْكِنُكَ", "yumkinuka", "you can (to a man)"],
       ["هَلْ يُمْكِنُنِي؟", "hal yumkinunī?", "may I?"],
       ["يَجِبُ أَنْ", "yajibu an", "must / have to"],
       ["أَحْتَاجُ إِلَى", "aḥtāju ilā", "I need"],

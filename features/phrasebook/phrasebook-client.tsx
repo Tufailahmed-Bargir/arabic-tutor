@@ -31,7 +31,7 @@ export function PhrasebookClient() {
             aria-hidden
           />
           <Input
-            type="search"
+            type="text"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             placeholder="Search English or Arabic"

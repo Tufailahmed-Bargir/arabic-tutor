@@ -1,5 +1,6 @@
 import { describe, expect, test } from "bun:test";
 import { buildTalkContext } from "@/features/talk/lesson-context";
+import { SCENARIOS } from "@/features/talk/scenarios";
 import { tutorVariablesSchema } from "@/features/talk/tutor-prompt";
 import { LESSONS, getWord } from "./lessons";
 
@@ -35,12 +36,14 @@ describe("curriculum", () => {
     }
   });
 
-  test("every lesson fits the tutor's variable limits", () => {
-    for (const lesson of LESSONS) {
-      const vars = buildTalkContext(
-        {},
-        `lesson-${lesson.day}`,
-      ).dynamicVariables;
+  // The backup tutor's token route rejects anything over these limits with a 400.
+  test("every lesson and role-play fits the tutor's variable limits", () => {
+    const topics = [
+      ...LESSONS.map((l) => `lesson-${l.day}`),
+      ...SCENARIOS.map((s) => `scenario-${s.id}`),
+    ];
+    for (const topic of topics) {
+      const vars = buildTalkContext({}, topic).dynamicVariables;
       expect(tutorVariablesSchema.safeParse(vars).success).toBe(true);
     }
   });

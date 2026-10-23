@@ -314,9 +314,14 @@ export function TalkSkeleton() {
 }
 
 export function TalkClient() {
-  const progress = useProgress();
   // Missions link here with ?topic=scenario-<id> to open straight into that role-play.
-  const initialTopic = useSearchParams().get("topic");
+  // Next keeps this page alive between visits, so remount when the requested topic changes.
+  const requested = useSearchParams().get("topic");
+  return <TalkTopic key={requested ?? ""} initialTopic={requested} />;
+}
+
+function TalkTopic({ initialTopic }: { initialTopic: string | null }) {
+  const progress = useProgress();
   const [topicId, setTopicId] = useState<string | null>(initialTopic);
   const completed = progress?.completed;
 
