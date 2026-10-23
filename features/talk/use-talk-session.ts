@@ -46,6 +46,18 @@ async function requestMicrophone(): Promise<TalkError | null> {
   }
 }
 
+// The SDK forwards raw server events ("Server error: Unknown error"); quota
+// exhaustion in particular arrives with no reason attached.
+function describeSessionError(message: string): string {
+  if (/quota|limit/i.test(message)) {
+    return "The voice tutor has reached its usage limit. Please try again later.";
+  }
+  if (!message || message.startsWith("Server error")) {
+    return "The voice tutor disconnected unexpectedly. Please start a new conversation.";
+  }
+  return message;
+}
+
 export function useTalkSession(context: TalkContext) {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [error, setError] = useState<TalkError | null>(null);
@@ -63,10 +75,7 @@ export function useTalkSession(context: TalkContext) {
       progressActions.recordTalkSession();
     },
     onError: (message) => {
-      setError({
-        kind: "session",
-        message: message || "The conversation was interrupted.",
-      });
+      setError({ kind: "session", message: describeSessionError(message) });
     },
   });
 
