@@ -1,6 +1,8 @@
 export const GEMINI_LIVE_MODEL = "gemini-3.8-live";
 /** The SDK only supports ephemeral (constrained) Live sessions on v1alpha. */
 export const GEMINI_API_VERSION = "v1alpha";
+/** A male prebuilt voice, matching the ElevenLabs tutor ("Eric"). */
+export const GEMINI_TUTOR_VOICE = "Charon";
 
 const INPUT_RATE = 16_000;
 const OUTPUT_RATE = 24_000;

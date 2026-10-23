@@ -6,7 +6,11 @@ import {
   tutorPrompt,
   tutorVariablesSchema,
 } from "@/features/talk/tutor-prompt";
-import { GEMINI_API_VERSION, GEMINI_LIVE_MODEL } from "@/features/talk/gemini";
+import {
+  GEMINI_API_VERSION,
+  GEMINI_LIVE_MODEL,
+  GEMINI_TUTOR_VOICE,
+} from "@/features/talk/gemini";
 import { env } from "@/lib/env";
 
 const NO_STORE = { "Cache-Control": "no-store" } as const;
@@ -48,6 +52,11 @@ export async function POST(request: Request) {
           config: {
             responseModalities: [Modality.AUDIO],
             systemInstruction: tutorPrompt(variables),
+            speechConfig: {
+              voiceConfig: {
+                prebuiltVoiceConfig: { voiceName: GEMINI_TUTOR_VOICE },
+              },
+            },
             inputAudioTranscription: {},
             outputAudioTranscription: {},
           },
