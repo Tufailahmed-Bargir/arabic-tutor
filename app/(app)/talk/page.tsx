@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
-import { TalkClient } from "@/features/talk/talk-client";
+import { Suspense } from "react";
+import { TalkClient, TalkSkeleton } from "@/features/talk/talk-client";
 
 export const metadata: Metadata = {
   title: "Talk with your tutor",
@@ -19,7 +20,10 @@ export default function TalkPage() {
           everything down.
         </p>
       </header>
-      <TalkClient />
+      {/* The topic comes from the URL, which is only known at request time. */}
+      <Suspense fallback={<TalkSkeleton />}>
+        <TalkClient />
+      </Suspense>
     </div>
   );
 }

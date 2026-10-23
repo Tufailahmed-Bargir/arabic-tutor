@@ -38,6 +38,13 @@ export const progressSchema = z.object({
       }),
     )
     .default({}),
+  // Checkpoint quizzes and speaking missions, keyed "checkpoint:<unit>" / "mission:<scenario>".
+  challenges: z
+    .record(
+      z.string(),
+      z.object({ completedAt: z.string(), score: z.number() }),
+    )
+    .default({}),
 });
 
 export type ProgressState = z.infer<typeof progressSchema>;
@@ -54,6 +61,7 @@ export function createInitialState(): ProgressState {
     prefs: { showHarakat: true, showTranslit: true },
     talkSessions: 0,
     practice: {},
+    challenges: {},
   };
 }
 

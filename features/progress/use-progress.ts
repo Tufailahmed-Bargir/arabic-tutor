@@ -183,6 +183,28 @@ export const progressActions = {
     );
   },
 
+  /** Records a finished challenge, keeping the best score and the first completion date. */
+  completeChallenge(id: string, score: number) {
+    const today = toDateKey();
+    const s = current();
+    const previous = s.challenges[id];
+    commit(
+      withActivity(
+        {
+          ...s,
+          challenges: {
+            ...s.challenges,
+            [id]: {
+              completedAt: previous?.completedAt ?? new Date().toISOString(),
+              score: Math.max(previous?.score ?? 0, score),
+            },
+          },
+        },
+        today,
+      ),
+    );
+  },
+
   reset() {
     commit(createInitialState());
   },

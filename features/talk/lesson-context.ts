@@ -97,7 +97,7 @@ export function buildTalkContext(
         lesson_title: `Role-play: ${scenario.title}`,
         level,
         lesson_vocab: vocabLine(words),
-        grammar_point: `Role-play task: ${scenario.task}`,
+        grammar_point: `Role-play task: ${scenario.task} Help the learner achieve these goals: ${scenario.goals.join("; ")}.`,
       },
     };
   }

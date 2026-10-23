@@ -6,9 +6,13 @@ import {
   BookOpenCheck,
   Flame,
   Layers,
+  MessageSquareQuote,
   Mic,
   PartyPopper,
+  Trophy,
 } from "lucide-react";
+import { achievements, isEarned } from "@/features/challenges/challenges";
+import { PHRASE_COUNT } from "@/features/phrasebook/phrases";
 import { ArabicText } from "@/components/arabic-text";
 import { buttonVariants } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -59,6 +63,7 @@ export function DashboardClient() {
   const streak = liveStreak(progress.streak, today);
   const isNew =
     completedDays.size === 0 && Object.keys(progress.cards).length === 0;
+  const earnedBadges = achievements(progress).filter(isEarned).length;
 
   return (
     <div className="space-y-5">
@@ -250,6 +255,45 @@ export function DashboardClient() {
             )}
           </CardContent>
         </Card>
+      </div>
+
+      <div className="grid gap-4 sm:grid-cols-2">
+        <Link
+          href="/challenges"
+          className="group bg-card hover:bg-muted/50 flex items-center gap-4 rounded-xl border p-4 transition-colors"
+        >
+          <span className="grid size-11 shrink-0 place-items-center rounded-full bg-amber-500/10 text-amber-500">
+            <Trophy className="size-5" aria-hidden />
+          </span>
+          <span className="min-w-0 flex-1">
+            <span className="block font-medium">Challenges</span>
+            <span className="text-muted-foreground block text-sm">
+              {earnedBadges} badges · speaking missions and unit checkpoints
+            </span>
+          </span>
+          <ArrowRight
+            className="text-muted-foreground size-4 transition-transform group-hover:translate-x-0.5"
+            aria-hidden
+          />
+        </Link>
+        <Link
+          href="/phrases"
+          className="group bg-card hover:bg-muted/50 flex items-center gap-4 rounded-xl border p-4 transition-colors"
+        >
+          <span className="grid size-11 shrink-0 place-items-center rounded-full bg-sky-500/10 text-sky-500">
+            <MessageSquareQuote className="size-5" aria-hidden />
+          </span>
+          <span className="min-w-0 flex-1">
+            <span className="block font-medium">Phrasebook</span>
+            <span className="text-muted-foreground block text-sm">
+              {PHRASE_COUNT} ready-made sentences for real situations
+            </span>
+          </span>
+          <ArrowRight
+            className="text-muted-foreground size-4 transition-transform group-hover:translate-x-0.5"
+            aria-hidden
+          />
+        </Link>
       </div>
 
       <nav

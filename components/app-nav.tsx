@@ -9,8 +9,10 @@ import {
   Dumbbell,
   Layers,
   Languages,
+  MessageSquareQuote,
   Mic,
   Settings,
+  Trophy,
   type LucideIcon,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -29,7 +31,10 @@ const PRIMARY: NavItem[] = [
   { href: "/review", label: "Review", icon: Layers },
 ];
 
+// Desktop sidebar only; the dashboard links to these on mobile, where the bottom bar holds five.
 const SECONDARY: NavItem[] = [
+  { href: "/challenges", label: "Challenges", icon: Trophy },
+  { href: "/phrases", label: "Phrasebook", icon: MessageSquareQuote },
   { href: "/alphabet", label: "Alphabet", icon: Languages },
   { href: "/settings", label: "Settings", icon: Settings },
 ];

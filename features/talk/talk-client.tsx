@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import { useSearchParams } from "next/navigation";
 import { ConversationProvider } from "@elevenlabs/react";
 import {
   AlertTriangle,
@@ -300,7 +301,7 @@ function TalkSession({
   );
 }
 
-function TalkSkeleton() {
+export function TalkSkeleton() {
   return (
     <div className="grid gap-6 lg:grid-cols-[20rem_1fr]" aria-busy="true">
       <Skeleton className="h-56 rounded-xl" />
@@ -314,7 +315,9 @@ function TalkSkeleton() {
 
 export function TalkClient() {
   const progress = useProgress();
-  const [topicId, setTopicId] = useState<string | null>(null);
+  // Missions link here with ?topic=scenario-<id> to open straight into that role-play.
+  const initialTopic = useSearchParams().get("topic");
+  const [topicId, setTopicId] = useState<string | null>(initialTopic);
   const completed = progress?.completed;
 
   const context = useMemo(

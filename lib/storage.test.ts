@@ -26,6 +26,18 @@ describe("parseState", () => {
     expect(state.prefs.showHarakat).toBe(false);
     expect(state.talkSessions).toBe(2);
     expect(state.practice).toEqual({});
+    expect(state.challenges).toEqual({});
+  });
+
+  test("keeps challenge results", () => {
+    const state = createInitialState();
+    state.challenges["mission:cafe"] = {
+      completedAt: "2026-10-23T09:00:00.000Z",
+      score: 100,
+    };
+    expect(parseState(JSON.stringify(state)).challenges).toEqual(
+      state.challenges,
+    );
   });
 
   test("falls back to a fresh state for corrupt data", () => {
