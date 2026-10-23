@@ -6,6 +6,14 @@ const signedUrlResponse = z.object({ signed_url: z.string().url() });
 
 const NO_STORE = { "Cache-Control": "no-store" } as const;
 
+/** Sends the client to the Gemini backup tutor when it is configured, otherwise reports the ElevenLabs failure. */
+function unavailable(error: string) {
+  if (env.GEMINI_API_KEY) {
+    return NextResponse.json({ mode: "gemini" }, { headers: NO_STORE });
+  }
+  return NextResponse.json({ error }, { status: 502, headers: NO_STORE });
+}
+
 export async function GET() {
   // Signed URLs are short-lived, so this must never be prerendered at build time.
   await connection();
@@ -27,18 +35,12 @@ export async function GET() {
     );
 
     if (!upstream.ok) {
-      return NextResponse.json(
-        { error: "The voice service rejected the request." },
-        { status: 502, headers: NO_STORE },
-      );
+      return unavailable("The voice service rejected the request.");
     }
 
     const parsed = signedUrlResponse.safeParse(await upstream.json());
     if (!parsed.success) {
-      return NextResponse.json(
-        { error: "The voice service returned an unexpected response." },
-        { status: 502, headers: NO_STORE },
-      );
+      return unavailable("The voice service returned an unexpected response.");
     }
 
     return NextResponse.json(
@@ -46,9 +48,6 @@ export async function GET() {
       { headers: NO_STORE },
     );
   } catch {
-    return NextResponse.json(
-      { error: "Could not reach the voice service." },
-      { status: 502, headers: NO_STORE },
-    );
+    return unavailable("Could not reach the voice service.");
   }
 }

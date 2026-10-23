@@ -6,10 +6,12 @@ import { z } from "zod";
 import { progressActions } from "@/features/progress/use-progress";
 import { addLocalMessage, upsertMessage, type ChatMessage } from "./messages";
 import type { TalkContext } from "./lesson-context";
+import { GeminiUnavailableError, useGeminiSession } from "./use-gemini-session";
 
 const sessionSchema = z.discriminatedUnion("mode", [
   z.object({ mode: z.literal("signed"), signedUrl: z.string() }),
   z.object({ mode: z.literal("public"), agentId: z.string() }),
+  z.object({ mode: z.literal("gemini") }),
 ]);
 
 export type TalkErrorKind = "mic-denied" | "insecure" | "no-mic" | "session";
@@ -18,6 +20,8 @@ export interface TalkError {
   kind: TalkErrorKind;
   message: string;
 }
+
+export type VoiceProvider = "elevenlabs" | "gemini";
 
 async function requestMicrophone(): Promise<TalkError | null> {
   if (!window.isSecureContext || !navigator.mediaDevices?.getUserMedia) {
@@ -58,12 +62,41 @@ function describeSessionError(message: string): string {
   return message;
 }
 
+function errorMessage(error: unknown, fallback: string): string {
+  return error instanceof Error ? error.message : fallback;
+}
+
 export function useTalkSession(context: TalkContext) {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [error, setError] = useState<TalkError | null>(null);
+  const [notice, setNotice] = useState<string | null>(null);
   const [preparing, setPreparing] = useState(false);
   const [textOnly, setTextOnly] = useState(false);
+  // Once ElevenLabs fails (usually quota), stay on Gemini until the page reloads.
+  const [provider, setProvider] = useState<VoiceProvider>("elevenlabs");
+  const providerRef = useRef<VoiceProvider>("elevenlabs");
+  const textOnlyRef = useRef(false);
+  const resumingRef = useRef(false);
   const localId = useRef(0);
+
+  const switchProvider = useCallback((next: VoiceProvider) => {
+    providerRef.current = next;
+    setProvider(next);
+  }, []);
+
+  const gemini = useGeminiSession({
+    onTranscript: (message) =>
+      setMessages((prev) => upsertMessage(prev, message)),
+    onConnect: () => {
+      if (!resumingRef.current) progressActions.recordTalkSession();
+      resumingRef.current = false;
+    },
+    onError: (message) => setError({ kind: "session", message }),
+  });
+  const startGemini = gemini.start;
+
+  // Set below, once the ElevenLabs controls exist; the SDK's onError needs the latest copy.
+  const fallBackRef = useRef<(reason: string) => void>(() => {});
 
   const conversation = useConversation({
     onMessage: ({ message, role, event_id, response_id }) => {
@@ -75,17 +108,43 @@ export function useTalkSession(context: TalkContext) {
       progressActions.recordTalkSession();
     },
     onError: (message) => {
-      setError({ kind: "session", message: describeSessionError(message) });
+      if (providerRef.current !== "elevenlabs") return;
+      fallBackRef.current(describeSessionError(message));
     },
   });
 
   const { startSession, endSession, status, sendUserMessage } = conversation;
 
+  useEffect(() => {
+    fallBackRef.current = (reason) => {
+      // Keep the transcript so a session cut off mid-lesson carries on.
+      endSession();
+      switchProvider("gemini");
+      resumingRef.current = status === "connected";
+      startGemini(context.dynamicVariables, textOnlyRef.current)
+        .then(() =>
+          setNotice("Switched to the backup tutor so you can keep practising."),
+        )
+        .catch((err: unknown) => {
+          switchProvider("elevenlabs");
+          setError({
+            kind: "session",
+            message:
+              err instanceof GeminiUnavailableError
+                ? reason
+                : errorMessage(err, reason),
+          });
+        });
+    };
+  });
+
   const start = useCallback(
     async (options: { textOnly: boolean }) => {
       setError(null);
+      setNotice(null);
       setPreparing(true);
       setTextOnly(options.textOnly);
+      textOnlyRef.current = options.textOnly;
 
       try {
         if (!options.textOnly) {
@@ -96,11 +155,26 @@ export function useTalkSession(context: TalkContext) {
           }
         }
 
+        if (providerRef.current === "gemini") {
+          setMessages([]);
+          await startGemini(context.dynamicVariables, options.textOnly);
+          return;
+        }
+
         const res = await fetch("/api/voice/session", { cache: "no-store" });
         if (!res.ok) throw new Error("Could not start a voice session.");
         const session = sessionSchema.parse(await res.json());
 
         setMessages([]);
+        if (session.mode === "gemini") {
+          switchProvider("gemini");
+          await startGemini(context.dynamicVariables, options.textOnly);
+          setNotice(
+            "Using the backup tutor while the main voice is unavailable.",
+          );
+          return;
+        }
+
         startSession({
           ...(session.mode === "signed"
             ? { signedUrl: session.signedUrl }
@@ -111,29 +185,36 @@ export function useTalkSession(context: TalkContext) {
       } catch (err) {
         setError({
           kind: "session",
-          message:
-            err instanceof Error ? err.message : "Could not start the session.",
+          message: errorMessage(err, "Could not start the session."),
         });
       } finally {
         setPreparing(false);
       }
     },
-    [context.dynamicVariables, startSession],
+    [context.dynamicVariables, startGemini, startSession, switchProvider],
   );
 
+  const stopGemini = gemini.stop;
   const stop = useCallback(() => {
-    endSession();
-  }, [endSession]);
+    if (providerRef.current === "gemini") stopGemini();
+    else endSession();
+  }, [endSession, stopGemini]);
 
+  const sendGemini = gemini.send;
   const send = useCallback(
     (text: string) => {
       localId.current += 1;
-      setMessages((prev) =>
-        addLocalMessage(prev, `local-${localId.current}`, text),
-      );
+      const id = `local-${localId.current}`;
+      if (providerRef.current === "gemini") {
+        // Gemini never echoes typed text back, so add it as final straight away.
+        setMessages((prev) => upsertMessage(prev, { id, role: "user", text }));
+        sendGemini(text);
+        return;
+      }
+      setMessages((prev) => addLocalMessage(prev, id, text));
       sendUserMessage(text);
     },
-    [sendUserMessage],
+    [sendGemini, sendUserMessage],
   );
 
   // Hang up if the learner navigates away mid-conversation.
@@ -143,15 +224,19 @@ export function useTalkSession(context: TalkContext) {
   }, [endSession]);
   useEffect(() => () => endRef.current(), []);
 
+  const onGemini = provider === "gemini";
+
   return {
     messages,
     error,
+    notice,
+    provider,
     preparing,
     textOnly,
-    status,
-    mode: conversation.mode,
-    isMuted: conversation.isMuted,
-    setMuted: conversation.setMuted,
+    status: onGemini ? gemini.status : status,
+    mode: onGemini ? gemini.mode : conversation.mode,
+    isMuted: onGemini ? gemini.isMuted : conversation.isMuted,
+    setMuted: onGemini ? gemini.setMuted : conversation.setMuted,
     start,
     stop,
     send,

@@ -9,6 +9,7 @@ import {
   Mic,
   MicOff,
   PhoneOff,
+  RefreshCw,
   ShieldAlert,
 } from "lucide-react";
 import { ArabicText } from "@/components/arabic-text";
@@ -263,6 +264,16 @@ function TalkSession({
             </p>
           </CardContent>
         </Card>
+
+        {session.notice && (
+          <p
+            role="status"
+            className="bg-muted/40 text-muted-foreground flex items-center gap-2 rounded-xl border px-4 py-3 text-sm"
+          >
+            <RefreshCw className="size-4 shrink-0" aria-hidden="true" />
+            {session.notice}
+          </p>
+        )}
 
         {error && (
           <ErrorPanel
