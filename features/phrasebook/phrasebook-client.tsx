@@ -34,7 +34,7 @@ export function PhrasebookClient() {
             type="search"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            placeholder="Search in English, transliteration or Arabic"
+            placeholder="Search English or Arabic"
             aria-label="Search phrases"
             className="h-10 ps-9 pe-9"
           />

@@ -3,6 +3,7 @@
 import { ArrowRight, Lightbulb } from "lucide-react";
 
 import { ArabicText } from "@/components/arabic-text";
+import { MixedText } from "@/components/mixed-text";
 import { SpeakButton } from "@/components/speak-button";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -86,7 +87,7 @@ export function LearnStep({ lesson, onContinue }: LearnStepProps) {
             </CardTitle>
           </CardHeader>
           <CardContent className="text-muted-foreground text-sm leading-relaxed">
-            {lesson.grammar.body}
+            <MixedText text={lesson.grammar.body} />
           </CardContent>
         </Card>
       )}

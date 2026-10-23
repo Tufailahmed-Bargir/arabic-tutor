@@ -36,6 +36,9 @@ import {
   type Checkpoint,
 } from "./challenges";
 
+// In course order, so the next mission to try is always near the top.
+const MISSIONS = [...SCENARIOS].sort((a, b) => a.afterDay - b.afterDay);
+
 function ChallengesSkeleton() {
   return (
     <div className="space-y-6" aria-busy="true" aria-label="Loading challenges">
@@ -375,7 +378,7 @@ export function ChallengesClient() {
           description="Real-life role-plays with your tutor. Hit every goal, then mark the mission done."
         />
         <ul className="grid gap-3 sm:grid-cols-2">
-          {SCENARIOS.map((scenario) => (
+          {MISSIONS.map((scenario) => (
             <MissionCard
               key={scenario.id}
               scenario={scenario}
@@ -399,7 +402,10 @@ export function ChallengesClient() {
               key={checkpoint.id}
               checkpoint={checkpoint}
               progress={progress}
-              onStart={() => setActive(checkpoint)}
+              onStart={() => {
+                setActive(checkpoint);
+                window.scrollTo({ top: 0 });
+              }}
             />
           ))}
         </ul>

@@ -268,7 +268,8 @@ export function DashboardClient() {
           <span className="min-w-0 flex-1">
             <span className="block font-medium">Challenges</span>
             <span className="text-muted-foreground block text-sm">
-              {earnedBadges} badges · speaking missions and unit checkpoints
+              {earnedBadges} {earnedBadges === 1 ? "badge" : "badges"} ·
+              missions and checkpoints
             </span>
           </span>
           <ArrowRight
