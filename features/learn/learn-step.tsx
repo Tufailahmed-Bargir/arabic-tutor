@@ -1,6 +1,7 @@
 "use client";
 
 import { ArrowRight, Lightbulb } from "lucide-react";
+import Image from "next/image";
 
 import { ArabicText } from "@/components/arabic-text";
 import { MixedText } from "@/components/mixed-text";
@@ -15,6 +16,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { LETTERS, letterForms } from "@/features/curriculum/alphabet";
+import { getWordImage } from "@/features/curriculum/images";
 import type { Lesson, Letter } from "@/features/curriculum/types";
 import { ListenThrough } from "@/features/learn/listen-through";
 
@@ -112,21 +114,34 @@ export function LearnStep({ lesson, onContinue }: LearnStepProps) {
           <ListenThrough words={lesson.words} />
         </div>
         <ul className="grid gap-2 sm:grid-cols-2">
-          {lesson.words.map((word) => (
-            <li
-              key={word.id}
-              className="bg-card hover:bg-muted/40 flex items-center gap-3 rounded-xl border p-3 transition-colors"
-            >
-              <SpeakButton text={word.ar} />
-              <div className="min-w-0 flex-1">
-                <p className="truncate text-sm font-medium">{word.en}</p>
-                <p className="text-muted-foreground truncate text-xs">
-                  {word.tr}
-                </p>
-              </div>
-              <ArabicText text={word.ar} size="lg" />
-            </li>
-          ))}
+          {lesson.words.map((word) => {
+            const image = getWordImage(word.id);
+            return (
+              <li
+                key={word.id}
+                className="bg-card hover:bg-muted/40 flex items-center gap-3 rounded-xl border p-3 transition-colors"
+              >
+                {image && (
+                  <Image
+                    src={image}
+                    alt={word.en}
+                    width={48}
+                    height={48}
+                    sizes="48px"
+                    className="size-12 shrink-0 rounded-lg object-cover"
+                  />
+                )}
+                <SpeakButton text={word.ar} />
+                <div className="min-w-0 flex-1">
+                  <p className="truncate text-sm font-medium">{word.en}</p>
+                  <p className="text-muted-foreground truncate text-xs">
+                    {word.tr}
+                  </p>
+                </div>
+                <ArabicText text={word.ar} size="lg" />
+              </li>
+            );
+          })}
         </ul>
       </div>
 
