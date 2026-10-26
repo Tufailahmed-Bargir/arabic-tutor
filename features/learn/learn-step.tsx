@@ -123,8 +123,14 @@ export function LearnStep({ lesson, onContinue }: LearnStepProps) {
               >
                 {image && (
                   <Image
-                    src={image}
+                    src={image.src}
                     alt={word.en}
+                    title={
+                      image.credit
+                        ? `Photo: ${image.credit.artist} (${image.credit.license})`
+                        : undefined
+                    }
+                    unoptimized={image.unoptimized}
                     width={48}
                     height={48}
                     sizes="48px"
