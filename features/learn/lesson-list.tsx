@@ -104,8 +104,8 @@ export function LessonList() {
         <div className="rounded-xl border border-dashed p-6 text-center">
           <p className="font-medium">No lessons completed yet</p>
           <p className="text-muted-foreground mx-auto mt-1 max-w-sm text-sm">
-            {TOTAL_LESSONS} lessons build up from vowels, greetings and numbers
-            to verbs, opinions and real conversations. Every lesson is open, so
+            {TOTAL_LESSONS} lessons build up from greetings and numbers to
+            verbs, opinions and real conversations. Every lesson is open, so
             jump in wherever you like.
           </p>
         </div>

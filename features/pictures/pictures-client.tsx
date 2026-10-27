@@ -17,6 +17,7 @@ import type { Word } from "@/features/curriculum/types";
 import { ExerciseRunner } from "@/features/learn/exercise-runner";
 import {
   buildPictureQuiz,
+  type ChoiceExercise,
   pictureWords,
   scoreResults,
   type QuizScore,
@@ -81,6 +82,7 @@ export function PicturesClient() {
   const progress = useProgress();
   const [everything, setEverything] = useState(false);
   const [round, setRound] = useState<number | null>(null);
+  const [exercises, setExercises] = useState<ChoiceExercise[]>([]);
   const [score, setScore] = useState<QuizScore | null>(null);
 
   const done = useMemo(
@@ -91,18 +93,14 @@ export function PicturesClient() {
     () => (done ? poolFor(done, everything) : []),
     [done, everything],
   );
-  const exercises = useMemo(
-    () => (round === null ? [] : buildPictureQuiz(pool, round, QUESTIONS)),
-    // The pool is frozen for the round so a progress update cannot reshuffle it mid-quiz.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [round],
-  );
-
   if (!progress) return <PicturesSkeleton />;
 
   function start() {
+    const seed = Math.floor(Math.random() * 100_000) + 1;
+    // Built once per round, so a progress update cannot reshuffle the quiz mid-way.
+    setExercises(buildPictureQuiz(pool, seed, QUESTIONS));
     setScore(null);
-    setRound(Math.floor(Math.random() * 100_000) + 1);
+    setRound(seed);
   }
 
   if (round !== null && score) {

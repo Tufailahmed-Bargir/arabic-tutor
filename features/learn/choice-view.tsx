@@ -116,7 +116,7 @@ export function ChoiceView({
               {option.image && (
                 <WordPicture
                   image={option.image}
-                  alt={option.label}
+                  alt=""
                   size={500}
                   sizes="(min-width: 448px) 208px, 45vw"
                   className="aspect-square w-full rounded-lg"

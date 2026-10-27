@@ -151,6 +151,19 @@ describe("picture quizzes", () => {
     expect(ids).toHaveLength(10);
   });
 
+  test("duplicate words and photos from different lessons are asked only once", () => {
+    for (const seed of SEEDS) {
+      const answers = buildPictureQuiz(pool, seed, 40).map((c) =>
+        getWord(c.answerId)!,
+      );
+      const sources = answers.map((w) => getWordImage(w.id)!.src);
+      const meanings = answers.map((w) => w.en.toLowerCase());
+      expect(new Set(sources).size).toBe(sources.length);
+      // The same English gloss (house, water, bread…) never repeats as an answer.
+      expect(new Set(meanings).size).toBe(meanings.length);
+    }
+  });
+
   test("lesson quizzes include photo questions where the lesson has photos", () => {
     const lesson = LESSONS.find((l) => pictureWords(l.words).length > 0)!;
     const kinds = buildQuiz(lesson, 1)

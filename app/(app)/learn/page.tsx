@@ -5,7 +5,7 @@ import { LessonList } from "@/features/learn/lesson-list";
 export const metadata: Metadata = {
   title: "Lessons",
   description:
-    "Your daily Arabic lessons, from the vowel marks to everyday conversation.",
+    "Your daily Arabic lessons, from first greetings to everyday conversation.",
   robots: { index: false, follow: false },
 };
 

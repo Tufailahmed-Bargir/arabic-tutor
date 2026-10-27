@@ -298,7 +298,18 @@ export function buildPictureQuiz(
     candidates.length >= OPTION_COUNT ? candidates : PICTURE_POOL,
     rng,
   );
-  return words
+  // The same thing can appear in several lessons (house, water, bread…), so ask about it once.
+  const askedImages = new Set<string>();
+  const askedMeanings = new Set<string>();
+  const asked = words.filter((w) => {
+    const src = getWordImage(w.id)!.src;
+    const meaning = meaningKey(w);
+    if (askedImages.has(src) || askedMeanings.has(meaning)) return false;
+    askedImages.add(src);
+    askedMeanings.add(meaning);
+    return true;
+  });
+  return asked
     .slice(0, count)
     .map((w, i) =>
       pictureChoice(

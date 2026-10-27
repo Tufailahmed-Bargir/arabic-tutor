@@ -2,8 +2,6 @@
 const HARAKAT = /[ً-ٰٟ]/g;
 const TATWEEL = /ـ/g;
 
-export const ZWJ = "‍";
-
 export function stripHarakat(text: string): string {
   return text.replace(HARAKAT, "");
 }

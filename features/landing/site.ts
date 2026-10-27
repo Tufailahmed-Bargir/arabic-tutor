@@ -24,7 +24,7 @@ export const FAQ = [
   {
     question: "Do I need to know any Arabic already?",
     answer:
-      "You only need to know the Arabic letters. The course starts with the vowel marks, then moves through greetings, numbers, family and food to present, past and future verbs, shopping, travel, work, health and giving opinions. A phrasebook and speaking challenges help you practise real conversations.",
+      "You only need to know the Arabic letters. The course starts with greetings and moves through numbers, family and food to present, past and future verbs, shopping, travel, work, health and giving opinions. A phrasebook and speaking challenges help you practise real conversations.",
   },
   {
     question: "Can I speak with the tutor out loud?",
