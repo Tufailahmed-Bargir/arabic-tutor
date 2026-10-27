@@ -50,23 +50,26 @@ export default function OpenGraphImage() {
       </div>
 
       <div style={{ display: "flex", gap: 12 }}>
-        {["Daily lessons", "Full alphabet", "Voice tutor", "Spaced review"].map(
-          (label) => (
-            <div
-              key={label}
-              style={{
-                display: "flex",
-                padding: "10px 20px",
-                borderRadius: 999,
-                border: "1px solid #3f3f46",
-                fontSize: 26,
-                color: "#d4d4d8",
-              }}
-            >
-              {label}
-            </div>
-          ),
-        )}
+        {[
+          "Daily lessons",
+          "Picture quizzes",
+          "Voice tutor",
+          "Spaced review",
+        ].map((label) => (
+          <div
+            key={label}
+            style={{
+              display: "flex",
+              padding: "10px 20px",
+              borderRadius: 999,
+              border: "1px solid #3f3f46",
+              fontSize: 26,
+              color: "#d4d4d8",
+            }}
+          >
+            {label}
+          </div>
+        ))}
       </div>
     </div>,
     size,

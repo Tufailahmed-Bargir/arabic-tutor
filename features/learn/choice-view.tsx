@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 
 import { ArabicText } from "@/components/arabic-text";
 import { SpeakButton } from "@/components/speak-button";
+import { WordPicture } from "@/components/word-picture";
 import { speakArabic } from "@/lib/speech";
 import { cn } from "@/lib/utils";
 import { AnswerFeedback } from "./answer-feedback";
@@ -22,6 +23,7 @@ export function ChoiceView({
 }: ChoiceViewProps) {
   const [picked, setPicked] = useState<string | null>(null);
   const answered = picked !== null;
+  const hasImages = exercise.options.some((o) => o.image);
 
   useEffect(() => {
     if (!autoPlay || !exercise.audio) return;
@@ -51,6 +53,15 @@ export function ChoiceView({
     <div className="space-y-6">
       <div className="space-y-3 text-center">
         <p className="text-muted-foreground text-sm">{exercise.instruction}</p>
+        {exercise.promptImage && (
+          <WordPicture
+            image={exercise.promptImage}
+            alt="Picture to identify"
+            size={500}
+            sizes="(min-width: 640px) 256px, 224px"
+            className="mx-auto size-56 rounded-2xl border sm:size-64"
+          />
+        )}
         {exercise.promptAr && (
           <div className="flex items-center justify-center gap-2">
             <ArabicText text={exercise.promptAr} size="2xl" />
@@ -73,7 +84,10 @@ export function ChoiceView({
       <div
         role="group"
         aria-label="Answer options"
-        className="grid gap-2 sm:grid-cols-2"
+        className={cn(
+          "grid gap-2",
+          hasImages ? "mx-auto max-w-md grid-cols-2 gap-3" : "sm:grid-cols-2",
+        )}
       >
         {exercise.options.map((option, i) => {
           const isAnswer = option.id === exercise.answerId;
@@ -86,6 +100,7 @@ export function ChoiceView({
               disabled={answered}
               className={cn(
                 "bg-card flex min-h-14 items-center gap-3 rounded-xl border px-4 py-3 text-start transition-colors",
+                option.image && "relative flex-col p-2",
                 "focus-visible:ring-ring/50 focus-visible:ring-3 focus-visible:outline-none",
                 !answered && "hover:border-foreground/30 hover:bg-muted/60",
                 answered &&
@@ -98,24 +113,41 @@ export function ChoiceView({
                 answered && !isAnswer && !isPicked && "opacity-60",
               )}
             >
+              {option.image && (
+                <WordPicture
+                  image={option.image}
+                  alt={option.label}
+                  size={500}
+                  sizes="(min-width: 448px) 208px, 45vw"
+                  className="aspect-square w-full rounded-lg"
+                />
+              )}
               <kbd
                 aria-hidden
-                className="text-muted-foreground hidden size-5 shrink-0 items-center justify-center rounded border text-[0.65rem] sm:flex"
+                className={cn(
+                  "text-muted-foreground hidden size-5 shrink-0 items-center justify-center rounded border text-[0.65rem] sm:flex",
+                  option.image &&
+                    "bg-background/85 absolute start-3 top-3 border-transparent",
+                )}
               >
                 {i + 1}
               </kbd>
-              <span
-                className={cn(
-                  "flex-1",
-                  option.arabic ? "text-center" : "text-base",
-                )}
-              >
-                {option.arabic ? (
-                  <ArabicText text={option.label} size="xl" />
-                ) : (
-                  option.label
-                )}
-              </span>
+              {option.image ? (
+                <span className="sr-only">{option.label}</span>
+              ) : (
+                <span
+                  className={cn(
+                    "flex-1",
+                    option.arabic ? "text-center" : "text-base",
+                  )}
+                >
+                  {option.arabic ? (
+                    <ArabicText text={option.label} size="xl" />
+                  ) : (
+                    option.label
+                  )}
+                </span>
+              )}
               {answered && (isAnswer || isPicked) && (
                 <span className="sr-only">
                   {isAnswer ? "Correct answer" : "Your answer, incorrect"}

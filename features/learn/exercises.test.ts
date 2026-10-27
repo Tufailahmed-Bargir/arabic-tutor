@@ -1,10 +1,13 @@
 import { describe, expect, test } from "bun:test";
-import { LESSONS } from "@/features/curriculum/lessons";
+import { getWordImage } from "@/features/curriculum/images";
+import { ALL_LESSONS, LESSONS, getWord } from "@/features/curriculum/lessons";
 import {
   acceptedAnswers,
   buildListenRound,
+  buildPictureQuiz,
   buildQuiz,
   isTypingCorrect,
+  pictureWords,
   type ChoiceExercise,
 } from "./exercises";
 
@@ -83,5 +86,76 @@ describe("typing answers", () => {
   test("wrong answers are rejected", () => {
     expect(isTypingCorrect("cat", acceptedAnswers("house"))).toBe(false);
     expect(isTypingCorrect("", acceptedAnswers("house"))).toBe(false);
+  });
+});
+
+describe("picture quizzes", () => {
+  const pool = pictureWords(ALL_LESSONS.flatMap((l) => l.words));
+
+  test("there are plenty of pictured words to quiz on", () => {
+    expect(pool.length).toBeGreaterThan(50);
+  });
+
+  test("every option is distinct, unambiguous and has a photo behind it", () => {
+    for (const seed of SEEDS) {
+      for (const c of buildPictureQuiz(pool, seed, 30)) {
+        const answer = getWord(c.answerId)!;
+        expect(c.options.filter((o) => o.id === c.answerId)).toHaveLength(1);
+        expect(c.options).toHaveLength(4);
+
+        const options = c.options.map((o) => getWord(o.id)!);
+        // Different words, different meanings, different photos.
+        expect(new Set(options.map((w) => w.en.toLowerCase())).size).toBe(4);
+        const sources = options.map((w) => getWordImage(w.id)!.src);
+        expect(new Set(sources).size).toBe(4);
+        if (c.variant === "image-ar") {
+          expect(new Set(options.map((w) => w.ar)).size).toBe(4);
+        }
+
+        if (c.variant === "en-image") {
+          expect(c.options.every((o) => o.image)).toBe(true);
+          expect(c.promptText).toBe(answer.en);
+        } else {
+          expect(c.promptImage).toBeDefined();
+          expect(c.options.every((o) => !o.image)).toBe(true);
+        }
+      }
+    }
+  });
+
+  test("labels and alt text never give the answer away", () => {
+    for (const c of buildPictureQuiz(pool, 3, 30)) {
+      if (c.variant !== "en-image") continue;
+      for (const o of c.options) {
+        expect(o.label).toMatch(/^Picture \d$/);
+      }
+    }
+  });
+
+  test("look-alike photos never share a question", () => {
+    const together = (a: string, b: string) =>
+      SEEDS.some((seed) =>
+        buildPictureQuiz(pool, seed, 40).some((c) => {
+          const ens = c.options.map((o) => getWord(o.id)!.en);
+          return ens.includes(a) && ens.includes(b);
+        }),
+      );
+    expect(together("star", "night")).toBe(false);
+    expect(together("moon", "crescent")).toBe(false);
+    expect(together("apples", "an apple")).toBe(false);
+  });
+
+  test("a quiz asks about each word at most once", () => {
+    const ids = buildPictureQuiz(pool, 7, 10).map((c) => c.answerId);
+    expect(new Set(ids).size).toBe(ids.length);
+    expect(ids).toHaveLength(10);
+  });
+
+  test("lesson quizzes include photo questions where the lesson has photos", () => {
+    const lesson = LESSONS.find((l) => pictureWords(l.words).length > 0)!;
+    const kinds = buildQuiz(lesson, 1)
+      .filter((e): e is ChoiceExercise => e.kind === "choice")
+      .map((e) => e.variant);
+    expect(kinds.some((v) => v === "image-en" || v === "en-image")).toBe(true);
   });
 });

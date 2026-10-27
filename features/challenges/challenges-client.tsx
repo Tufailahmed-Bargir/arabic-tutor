@@ -18,6 +18,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
+import { completedCourseDays } from "@/features/curriculum/lessons";
 import { ExerciseRunner } from "@/features/learn/exercise-runner";
 import { scoreResults, type QuizScore } from "@/features/learn/exercises";
 import { progressActions, useProgress } from "@/features/progress/use-progress";
@@ -342,7 +343,7 @@ export function ChallengesClient() {
 
   const badges = achievements(progress);
   const earned = badges.filter(isEarned).length;
-  const doneDays = new Set(Object.keys(progress.completed).map(Number));
+  const doneDays = completedCourseDays(progress.completed);
   const missionsDone = SCENARIOS.filter(
     (s) => progress.challenges[missionId(s.id)],
   ).length;

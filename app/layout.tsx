@@ -23,7 +23,7 @@ export const metadata: Metadata = {
     template: "%s · Ustadh",
   },
   description:
-    "Learn Modern Standard Arabic from zero: daily lessons, the alphabet, spaced-repetition review and live voice conversations with an AI tutor.",
+    "Learn Modern Standard Arabic from zero: daily lessons, picture quizzes, spaced-repetition review and live voice conversations with an AI tutor.",
   applicationName: "Ustadh",
   openGraph: {
     type: "website",

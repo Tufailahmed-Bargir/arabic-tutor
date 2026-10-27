@@ -16,7 +16,11 @@ import { ArabicText } from "@/components/arabic-text";
 import { SpeakButton } from "@/components/speak-button";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
-import { LESSONS, getWord } from "@/features/curriculum/lessons";
+import {
+  LESSONS,
+  completedCourseDays,
+  getWord,
+} from "@/features/curriculum/lessons";
 import type { Word } from "@/features/curriculum/types";
 import { createRng, shuffle } from "@/features/learn/exercises";
 import {
@@ -40,7 +44,7 @@ function dateSeed(dateKey: string): number {
 }
 
 function pickSpeakingWords(progress: ProgressState, today: string): Word[] {
-  const done = new Set(Object.keys(progress.completed).map(Number));
+  const done = completedCourseDays(progress.completed);
   const lessons = LESSONS.filter((l) => done.has(l.day));
   const pool = (lessons.length > 0 ? lessons : LESSONS.slice(0, 1)).flatMap(
     (l) => l.words,
@@ -238,7 +242,7 @@ function PracticeSession({ progress }: { progress: ProgressState }) {
   );
   const [speakWords] = useState(() => pickSpeakingWords(progress, today));
 
-  const noLessons = Object.keys(progress.completed).length === 0;
+  const noLessons = completedCourseDays(progress.completed).size === 0;
   const complete = isPracticeComplete(day);
 
   useEffect(() => {
@@ -264,12 +268,13 @@ function PracticeSession({ progress }: { progress: ProgressState }) {
 
       {noLessons && (
         <div className="rounded-xl border border-amber-500/30 bg-amber-500/5 p-4 text-sm">
-          You haven’t finished a lesson yet, so today’s words come from Day 1.{" "}
+          You haven’t finished a lesson yet, so today’s words come from Day{" "}
+          {LESSONS[0]!.day}.{" "}
           <Link
-            href="/learn/1"
+            href={`/learn/${LESSONS[0]!.day}`}
             className="font-medium underline underline-offset-4"
           >
-            Start Lesson 1
+            Start Lesson {LESSONS[0]!.day}
           </Link>{" "}
           to unlock more.
         </div>

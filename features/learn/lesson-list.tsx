@@ -17,6 +17,7 @@ import {
   LESSONS,
   nextLessonDay,
   TOTAL_LESSONS,
+  completedCourseDays,
 } from "@/features/curriculum/lessons";
 import type { Lesson } from "@/features/curriculum/types";
 import { useProgress } from "@/features/progress/use-progress";
@@ -54,7 +55,7 @@ export function LessonList() {
   const progress = useProgress();
   if (!progress) return <LessonListSkeleton />;
 
-  const completed = new Set(Object.keys(progress.completed).map(Number));
+  const completed = completedCourseDays(progress.completed);
   const nextDay = nextLessonDay(completed);
   const next = LESSONS.find((l) => l.day === nextDay);
   const percent = Math.round((completed.size / TOTAL_LESSONS) * 100);
@@ -103,9 +104,8 @@ export function LessonList() {
         <div className="rounded-xl border border-dashed p-6 text-center">
           <p className="font-medium">No lessons completed yet</p>
           <p className="text-muted-foreground mx-auto mt-1 max-w-sm text-sm">
-            Seven short lessons teach the alphabet. The rest of the{" "}
-            {TOTAL_LESSONS} lessons build up from greetings and numbers to
-            verbs, opinions and real conversations. Every lesson is open, so
+            {TOTAL_LESSONS} lessons build up from vowels, greetings and numbers
+            to verbs, opinions and real conversations. Every lesson is open, so
             jump in wherever you like.
           </p>
         </div>

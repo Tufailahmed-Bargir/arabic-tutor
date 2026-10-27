@@ -60,7 +60,7 @@ describe("achievements", () => {
     const s = createInitialState();
     s.challenges[CHECKPOINTS[0]!.id] = { completedAt: "x", score: PASS_MARK };
     s.challenges[missionId("cafe")] = { completedAt: "x", score: 100 };
-    s.completed["1"] = { completedAt: "x", score: 80 };
+    s.completed[String(LESSONS[0]!.day)] = { completedAt: "x", score: 80 };
     const earned = achievements(s)
       .filter(isEarned)
       .map((a) => a.id);

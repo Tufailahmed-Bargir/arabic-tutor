@@ -1,7 +1,7 @@
 import { normalizeArabic, normalizeLatin } from "@/lib/arabic";
-import { LETTERS, letterForms } from "@/features/curriculum/alphabet";
-import { LESSONS } from "@/features/curriculum/lessons";
-import type { Lesson, Letter, Word } from "@/features/curriculum/types";
+import { getWordImage, type WordImage } from "@/features/curriculum/images";
+import { ALL_LESSONS } from "@/features/curriculum/lessons";
+import type { Lesson, Word } from "@/features/curriculum/types";
 
 export type Rng = () => number;
 
@@ -28,8 +28,10 @@ export function shuffle<T>(items: readonly T[], rng: Rng): T[] {
 
 export interface Option {
   id: string;
+  /** Spoiler-free text for picture options, so a failed image load never leaks the answer. */
   label: string;
   arabic: boolean;
+  image?: WordImage;
 }
 
 export interface Reveal {
@@ -39,7 +41,7 @@ export interface Reveal {
 }
 
 export type ChoiceVariant =
-  "ar-en" | "en-ar" | "listen-en" | "letter-form" | "letter-sound";
+  "ar-en" | "en-ar" | "listen-en" | "image-en" | "image-ar" | "en-image";
 
 export interface ChoiceExercise {
   kind: "choice";
@@ -48,6 +50,7 @@ export interface ChoiceExercise {
   instruction: string;
   promptAr?: string;
   promptText?: string;
+  promptImage?: WordImage;
   audio?: string;
   options: Option[];
   answerId: string;
@@ -84,7 +87,7 @@ export interface ExerciseResult {
   correct: boolean;
 }
 
-const ALL_WORDS: readonly Word[] = LESSONS.flatMap((l) => l.words);
+const ALL_WORDS: readonly Word[] = ALL_LESSONS.flatMap((l) => l.words);
 
 const OPTION_COUNT = 4;
 
@@ -170,68 +173,141 @@ function wordChoice(
   };
 }
 
-function letterReveal(letter: Letter): Reveal {
-  return { ar: letter.char, tr: letter.name, en: letter.sound };
+/** Words that have a photo; picture quizzes only ever draw options from these. */
+export function pictureWords(words: readonly Word[]): Word[] {
+  return words.filter((w) => getWordImage(w.id) !== undefined);
 }
 
-function letterOptions(
-  letter: Letter,
-  lessonLetters: readonly Letter[],
+const PICTURE_POOL: readonly Word[] = pictureWords(ALL_WORDS);
+
+/** Different words that would still show near-identical photos, so they never share a question. */
+const LOOKALIKES = [
+  ["star", "night"],
+  ["moon", "crescent"],
+];
+
+/** Plural, article and parenthetical differences are the same meaning for picture options. */
+function meaningKey(word: Word): string {
+  const first = normalizeLatin(
+    word.en.replace(/\s*\([^)]*\)/g, "").split("/")[0]!,
+  )
+    .replace(/^(a|an|the) /, "")
+    .replace(/ies$/, "y")
+    .replace(/s$/, "");
+  const group = LOOKALIKES.findIndex((g) => g.includes(first));
+  return group === -1 ? first : `group:${group}`;
+}
+
+type PictureVariant = "image-en" | "image-ar" | "en-image";
+
+function pictureDistractors(
+  word: Word,
+  pool: readonly Word[],
   rng: Rng,
-): Option[] {
-  const seen = new Set([letter.char]);
-  const others: Letter[] = [];
+  variant: PictureVariant,
+): Word[] {
+  const image = getWordImage(word.id)!;
+  const seenMeaning = new Set([meaningKey(word)]);
+  const seenImage = new Set([image.src]);
+  const seenArabic = new Set([arKey(word)]);
+  const out: Word[] = [];
   for (const candidate of [
-    ...shuffle(lessonLetters, rng),
-    ...shuffle(LETTERS, rng),
+    ...shuffle(pool, rng),
+    ...shuffle(PICTURE_POOL, rng),
   ]) {
-    if (others.length >= OPTION_COUNT - 1) break;
-    if (seen.has(candidate.char)) continue;
-    seen.add(candidate.char);
-    others.push(candidate);
+    if (out.length >= OPTION_COUNT - 1) break;
+    const src = getWordImage(candidate.id)!.src;
+    const meaning = meaningKey(candidate);
+    const arabic = arKey(candidate);
+    if (seenImage.has(src) || seenMeaning.has(meaning)) continue;
+    if (variant === "image-ar" && seenArabic.has(arabic)) continue;
+    seenImage.add(src);
+    seenMeaning.add(meaning);
+    seenArabic.add(arabic);
+    out.push(candidate);
   }
-  return shuffle([letter, ...others], rng).map((l) => ({
-    id: l.char,
-    label: l.char,
-    arabic: true,
-  }));
+  return out;
 }
 
-function letterChoice(
-  letter: Letter,
-  lessonLetters: readonly Letter[],
-  variant: "letter-form" | "letter-sound",
+function pictureChoice(
+  variant: PictureVariant,
+  word: Word,
+  pool: readonly Word[],
   rng: Rng,
 ): ChoiceExercise {
-  const options = letterOptions(letter, lessonLetters, rng);
+  const picked = shuffle(
+    [word, ...pictureDistractors(word, pool, rng, variant)],
+    rng,
+  );
+  const options: Option[] = picked.map((w, i) => {
+    if (variant === "en-image") {
+      return {
+        id: w.id,
+        label: `Picture ${i + 1}`,
+        arabic: false,
+        image: getWordImage(w.id, "large"),
+      };
+    }
+    return {
+      id: w.id,
+      label: variant === "image-ar" ? w.ar : w.en,
+      arabic: variant === "image-ar",
+    };
+  });
   const base = {
     kind: "choice" as const,
-    id: `${variant}:${letter.char}`,
+    id: `${variant}:${word.id}`,
     variant,
     options,
-    answerId: letter.char,
-    reveal: letterReveal(letter),
+    answerId: word.id,
+    reveal: wordReveal(word),
   };
-
-  if (variant === "letter-sound") {
+  if (variant === "en-image") {
     return {
       ...base,
-      instruction: "Which letter makes this sound?",
-      promptText: `${letter.name}: ${letter.sound}`,
-      audio: letter.example.ar,
+      instruction: "Which picture is",
+      promptText: word.en,
+      audio: word.ar,
     };
   }
-
-  const forms = letterForms(letter);
-  const positions = letter.joinsNext
-    ? ([forms.initial, forms.medial, forms.final] as const)
-    : ([forms.medial, forms.final] as const);
-  const shown = positions[Math.floor(rng() * positions.length)];
   return {
     ...base,
-    instruction: "Which letter is hiding in this shape?",
-    promptAr: shown,
+    instruction:
+      variant === "image-ar"
+        ? "Choose the Arabic for this picture"
+        : "What is this?",
+    promptImage: getWordImage(word.id, "large"),
   };
+}
+
+const PICTURE_VARIANTS: readonly PictureVariant[] = [
+  "image-en",
+  "en-image",
+  "image-ar",
+];
+
+/** A standalone picture quiz over any pool of words; words without a photo are skipped. */
+export function buildPictureQuiz(
+  pool: readonly Word[],
+  seed: number,
+  count = 10,
+): ChoiceExercise[] {
+  const rng = createRng(seed * 104729 + 17);
+  const candidates = pictureWords(pool);
+  const words = shuffle(
+    candidates.length >= OPTION_COUNT ? candidates : PICTURE_POOL,
+    rng,
+  );
+  return words
+    .slice(0, count)
+    .map((w, i) =>
+      pictureChoice(
+        PICTURE_VARIANTS[i % PICTURE_VARIANTS.length]!,
+        w,
+        words,
+        rng,
+      ),
+    );
 }
 
 /** Everything a learner might reasonably type for an English gloss. */
@@ -348,14 +424,13 @@ export function buildQuiz(lesson: Lesson, seed: number): Exercise[] {
     ...take(words, 1, 2).map((w) => wordChoice("listen-en", w, lesson, rng)),
   ];
 
-  const lessonLetters = (lesson.letters ?? [])
-    .map((c) => LETTERS.find((l) => l.char === c))
-    .filter((l): l is Letter => l !== undefined);
-  const letterExercises = lessonLetters.map((l, i) =>
-    letterChoice(
-      l,
-      lessonLetters,
-      i % 2 === 0 ? "letter-form" : "letter-sound",
+  // Two photo questions per lesson that has pictures, one in each direction.
+  const lessonPictures = take(pictureWords(words), 0, 2);
+  const pictureExercises = lessonPictures.map((w, i) =>
+    pictureChoice(
+      i % 2 === 0 ? "image-en" : "en-image",
+      w,
+      pictureWords(lesson.words),
       rng,
     ),
   );
@@ -364,7 +439,7 @@ export function buildQuiz(lesson: Lesson, seed: number): Exercise[] {
   const typing = take(words.filter(isTypable), 2, 3).map(typingExercise);
 
   return [
-    ...shuffle([...choices, ...letterExercises], rng),
+    ...shuffle([...choices, ...pictureExercises], rng),
     matchExercise(lesson, rng),
     ...typing,
   ];

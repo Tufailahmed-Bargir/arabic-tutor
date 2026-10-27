@@ -15,7 +15,6 @@ export const lessonSchema = z.object({
   titleAr: z.string(),
   objective: z.string(),
   grammar: z.object({ title: z.string(), body: z.string() }).optional(),
-  letters: z.array(z.string()).optional(),
   words: z.array(wordSchema).min(4),
 });
 export type Lesson = z.infer<typeof lessonSchema>;

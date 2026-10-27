@@ -29,7 +29,6 @@ export function alphabetLesson(
       title: "Arabic reads right to left",
       body: "Letters change shape depending on where they sit in a word: alone, at the start, in the middle or at the end. Six letters (ا د ذ ر ز و) never join to the letter after them.",
     },
-    letters: chars,
     words: words(
       day,
       letters.map((l) => [l.example.ar, l.example.tr, l.example.en] as const),

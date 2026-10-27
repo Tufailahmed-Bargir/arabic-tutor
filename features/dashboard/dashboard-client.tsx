@@ -22,6 +22,7 @@ import {
   getLesson,
   nextLessonDay,
   TOTAL_LESSONS,
+  completedCourseDays,
 } from "@/features/curriculum/lessons";
 import { toDateKey } from "@/lib/date";
 import { cn } from "@/lib/utils";
@@ -56,7 +57,7 @@ export function DashboardClient() {
   const now = new Date();
   const today = toDateKey(now);
   const hello = greeting(now.getHours());
-  const completedDays = new Set(Object.keys(progress.completed).map(Number));
+  const completedDays = completedCourseDays(progress.completed);
   const nextDay = nextLessonDay(completedDays);
   const nextLesson = nextDay === null ? undefined : getLesson(nextDay);
   const due = dueWordIds(progress, today).length;
@@ -89,7 +90,7 @@ export function DashboardClient() {
           <p className="text-xs font-medium tracking-wider text-emerald-600 uppercase dark:text-emerald-400">
             {nextLesson
               ? isNew
-                ? "Day 1"
+                ? `Day ${nextLesson.day}`
                 : `Up next · Day ${nextLesson.day}`
               : "All caught up"}
           </p>
@@ -113,7 +114,7 @@ export function DashboardClient() {
                   "w-full sm:w-auto",
                 )}
               >
-                {isNew ? "Start lesson 1" : "Continue"}
+                {isNew ? `Start lesson ${nextLesson.day}` : "Continue"}
                 <ArrowRight data-icon="inline-end" />
               </Link>
             </>
@@ -302,10 +303,10 @@ export function DashboardClient() {
         className="text-muted-foreground flex items-center justify-center gap-4 pt-2 text-sm"
       >
         <Link
-          href="/alphabet"
+          href="/pictures"
           className="hover:text-foreground underline-offset-4 hover:underline"
         >
-          Alphabet
+          Picture quiz
         </Link>
         <span aria-hidden>·</span>
         <Link

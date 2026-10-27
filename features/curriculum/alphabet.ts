@@ -1,4 +1,3 @@
-import { ZWJ } from "@/lib/arabic";
 import type { Letter } from "./types";
 
 export const LETTERS: Letter[] = [
@@ -199,21 +198,3 @@ export const LETTERS: Letter[] = [
     example: { ar: "يَد", tr: "yad", en: "hand" },
   },
 ];
-
-export interface LetterForms {
-  isolated: string;
-  initial: string;
-  medial: string;
-  final: string;
-}
-
-/** Joining is requested with ZWJ so the browser's shaping engine picks the right glyph. */
-export function letterForms(letter: Letter): LetterForms {
-  const { char, joinsNext } = letter;
-  return {
-    isolated: char,
-    initial: joinsNext ? `${char}${ZWJ}` : char,
-    medial: joinsNext ? `${ZWJ}${char}${ZWJ}` : `${ZWJ}${char}`,
-    final: `${ZWJ}${char}`,
-  };
-}

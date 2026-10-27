@@ -8,7 +8,7 @@ import {
   LayoutDashboard,
   Dumbbell,
   Layers,
-  Languages,
+  ImageIcon,
   MessageSquareQuote,
   Mic,
   Settings,
@@ -35,7 +35,7 @@ const PRIMARY: NavItem[] = [
 const SECONDARY: NavItem[] = [
   { href: "/challenges", label: "Challenges", icon: Trophy },
   { href: "/phrases", label: "Phrasebook", icon: MessageSquareQuote },
-  { href: "/alphabet", label: "Alphabet", icon: Languages },
+  { href: "/pictures", label: "Picture quiz", icon: ImageIcon },
   { href: "/settings", label: "Settings", icon: Settings },
 ];
 

@@ -2,7 +2,7 @@ export const SITE_NAME = "Ustadh";
 export const SITE_TAGLINE =
   "Learn Arabic a little every day, and speak it out loud.";
 export const SITE_DESCRIPTION =
-  "Daily Modern Standard Arabic lessons for beginners, with the full alphabet, spaced-repetition review and a voice tutor you can actually talk to. Arabic is always written out, with diacritics on or off.";
+  "Daily Modern Standard Arabic lessons for beginners, with picture quizzes, spaced-repetition review and a voice tutor you can actually talk to. Arabic is always written out, with diacritics on or off.";
 
 export const ARABIC_FONT_STACK =
   "var(--font-arabic, 'Noto Naskh Arabic', 'Amiri', 'Geeza Pro', serif)";
@@ -24,7 +24,7 @@ export const FAQ = [
   {
     question: "Do I need to know any Arabic already?",
     answer:
-      "No. The course starts with the alphabet and the sounds, then moves through greetings, numbers, family and food to present, past and future verbs, shopping, travel, work, health and giving opinions. A phrasebook and speaking challenges help you practise real conversations.",
+      "You only need to know the Arabic letters. The course starts with the vowel marks, then moves through greetings, numbers, family and food to present, past and future verbs, shopping, travel, work, health and giving opinions. A phrasebook and speaking challenges help you practise real conversations.",
   },
   {
     question: "Can I speak with the tutor out loud?",

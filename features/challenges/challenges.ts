@@ -1,4 +1,8 @@
-import { LESSONS, TOTAL_LESSONS } from "@/features/curriculum/lessons";
+import {
+  LESSONS,
+  TOTAL_LESSONS,
+  completedCourseDays,
+} from "@/features/curriculum/lessons";
 import type { Lesson, Word } from "@/features/curriculum/types";
 import {
   buildQuiz,
@@ -97,10 +101,7 @@ export function isEarned(a: Achievement): boolean {
 }
 
 export function achievements(s: ProgressState): Achievement[] {
-  const lessons = Object.keys(s.completed).length;
-  const alphabet = Array.from({ length: 8 }, (_, i) => i + 1).filter(
-    (d) => s.completed[String(d)],
-  ).length;
+  const lessons = completedCourseDays(s.completed).size;
   const passed = CHECKPOINTS.filter(
     (c) => (s.challenges[c.id]?.score ?? 0) >= PASS_MARK,
   ).length;
@@ -118,13 +119,6 @@ export function achievements(s: ProgressState): Achievement[] {
       description: "Finish your first lesson",
       value: lessons,
       target: 1,
-    },
-    {
-      id: "alphabet",
-      title: "Letter perfect",
-      description: "Finish the alphabet and vowel lessons",
-      value: alphabet,
-      target: 8,
     },
     {
       id: "ten-lessons",

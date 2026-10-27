@@ -57,6 +57,8 @@ export function ExerciseRunner({
     }
     setIndex((i) => i + 1);
     setAnswered(false);
+    // Feedback and tall picture questions leave the page scrolled; show the next prompt in full.
+    window.scrollTo({ top: 0 });
   }
 
   return (

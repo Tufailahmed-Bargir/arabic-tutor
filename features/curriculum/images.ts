@@ -21,12 +21,17 @@ function commonsFileName(url: URL): string | undefined {
 }
 
 /** Remote picture for a concrete word (house, book, water…), if one is curated. */
-export function getWordImage(wordId: string): WordImage | undefined {
-  const src = IMAGES[wordId];
-  if (!src) return undefined;
-  const url = new URL(src);
-  if (url.hostname !== COMMONS_HOST) return { src, unoptimized: false };
+export function getWordImage(
+  wordId: string,
+  size: "small" | "large" = "small",
+): WordImage | undefined {
+  const stored = IMAGES[wordId];
+  if (!stored) return undefined;
+  const url = new URL(stored);
+  if (url.hostname !== COMMONS_HOST) return { src: stored, unoptimized: false };
   const name = commonsFileName(url);
+  // Commons serves fixed thumbnail steps: 250px suits small tiles, 500px suits big prompts.
+  const src = size === "large" ? stored.replace("/250px-", "/500px-") : stored;
   return {
     src,
     unoptimized: true,

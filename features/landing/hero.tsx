@@ -36,9 +36,8 @@ export function Hero() {
           Learn Arabic a little every day, and speak it out loud
         </h1>
         <p className="text-muted-foreground mt-6 max-w-xl text-lg text-pretty">
-          Daily lessons, the complete alphabet and a voice tutor who drills what
-          you just learned. Arabic is always written out, with diacritics on or
-          off.
+          Daily lessons, picture quizzes and a voice tutor who drills what you
+          just learned. Arabic is always written out, with diacritics on or off.
         </p>
 
         <div className="mt-10 flex flex-col items-center gap-3 sm:flex-row">

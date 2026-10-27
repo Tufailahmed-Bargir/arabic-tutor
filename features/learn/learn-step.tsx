@@ -1,23 +1,16 @@
 "use client";
 
 import { ArrowRight, Lightbulb } from "lucide-react";
-import Image from "next/image";
 
 import { ArabicText } from "@/components/arabic-text";
 import { MixedText } from "@/components/mixed-text";
 import { SpeakButton } from "@/components/speak-button";
+import { WordPicture } from "@/components/word-picture";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { LETTERS, letterForms } from "@/features/curriculum/alphabet";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { getWordImage } from "@/features/curriculum/images";
-import type { Lesson, Letter } from "@/features/curriculum/types";
+import type { Lesson, Word } from "@/features/curriculum/types";
 import { ListenThrough } from "@/features/learn/listen-through";
 
 interface LearnStepProps {
@@ -25,51 +18,46 @@ interface LearnStepProps {
   onContinue: () => void;
 }
 
-function LetterCard({ letter }: { letter: Letter }) {
-  const forms = letterForms(letter);
-  const rows = [
-    ["Alone", forms.isolated],
-    ["Start", forms.initial],
-    ["Middle", forms.medial],
-    ["End", forms.final],
-  ] as const;
-
+function PictureCard({ word }: { word: Word }) {
+  const image = getWordImage(word.id, "large");
+  if (!image) return null;
   return (
-    <Card size="sm">
-      <CardHeader>
-        <CardTitle className="flex items-center justify-between">
-          <span>{letter.name}</span>
-          <SpeakButton text={letter.example.ar} />
-        </CardTitle>
-        <CardDescription>{letter.sound}</CardDescription>
-      </CardHeader>
-      <CardContent>
-        <dl className="grid grid-cols-4 gap-2 text-center">
-          {rows.map(([label, form]) => (
-            <div key={label} className="bg-muted/50 rounded-lg py-2">
-              <dt className="text-muted-foreground text-[0.65rem] tracking-wide uppercase">
-                {label}
-              </dt>
-              <dd className="mt-1">
-                <ArabicText text={form} size="xl" />
-              </dd>
-            </div>
-          ))}
-        </dl>
-        {!letter.joinsNext && (
-          <p className="text-muted-foreground mt-3 text-xs">
-            This letter never joins to the letter after it.
-          </p>
-        )}
-      </CardContent>
-    </Card>
+    <li className="bg-card overflow-hidden rounded-2xl border">
+      <WordPicture
+        image={image}
+        alt={word.en}
+        size={500}
+        sizes="(min-width: 640px) 320px, 50vw"
+        className="aspect-[4/3] w-full"
+      />
+      <div className="flex items-center gap-2 p-3">
+        <SpeakButton text={word.ar} />
+        <div className="min-w-0 flex-1">
+          <p className="truncate text-sm font-medium">{word.en}</p>
+          <p className="text-muted-foreground truncate text-xs">{word.tr}</p>
+        </div>
+        <ArabicText text={word.ar} size="lg" />
+      </div>
+    </li>
+  );
+}
+
+function WordRow({ word }: { word: Word }) {
+  return (
+    <li className="bg-card hover:bg-muted/40 flex items-center gap-3 rounded-xl border p-3 transition-colors">
+      <SpeakButton text={word.ar} />
+      <div className="min-w-0 flex-1">
+        <p className="truncate text-sm font-medium">{word.en}</p>
+        <p className="text-muted-foreground truncate text-xs">{word.tr}</p>
+      </div>
+      <ArabicText text={word.ar} size="lg" />
+    </li>
   );
 }
 
 export function LearnStep({ lesson, onContinue }: LearnStepProps) {
-  const letters = (lesson.letters ?? [])
-    .map((c) => LETTERS.find((l) => l.char === c))
-    .filter((l): l is Letter => l !== undefined);
+  const pictured = lesson.words.filter((w) => getWordImage(w.id));
+  const plain = lesson.words.filter((w) => !getWordImage(w.id));
 
   return (
     <section aria-labelledby="learn-heading" className="space-y-8">
@@ -94,61 +82,27 @@ export function LearnStep({ lesson, onContinue }: LearnStepProps) {
         </Card>
       )}
 
-      {letters.length > 0 && (
-        <div className="space-y-3">
-          <h3 className="text-sm font-medium">The letters</h3>
-          <div className="grid gap-3 sm:grid-cols-2">
-            {letters.map((letter) => (
-              <LetterCard key={letter.char} letter={letter} />
-            ))}
-          </div>
-        </div>
-      )}
-
       <div className="space-y-3">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <h3 className="text-sm font-medium">
-            {letters.length > 0 ? "Example words" : "Words"}{" "}
-            <Badge variant="secondary">{lesson.words.length}</Badge>
+            Words <Badge variant="secondary">{lesson.words.length}</Badge>
           </h3>
           <ListenThrough words={lesson.words} />
         </div>
-        <ul className="grid gap-2 sm:grid-cols-2">
-          {lesson.words.map((word) => {
-            const image = getWordImage(word.id);
-            return (
-              <li
-                key={word.id}
-                className="bg-card hover:bg-muted/40 flex items-center gap-3 rounded-xl border p-3 transition-colors"
-              >
-                {image && (
-                  <Image
-                    src={image.src}
-                    alt={word.en}
-                    title={
-                      image.credit
-                        ? `Photo: ${image.credit.artist} (${image.credit.license})`
-                        : undefined
-                    }
-                    unoptimized={image.unoptimized}
-                    width={48}
-                    height={48}
-                    sizes="48px"
-                    className="size-12 shrink-0 rounded-lg object-cover"
-                  />
-                )}
-                <SpeakButton text={word.ar} />
-                <div className="min-w-0 flex-1">
-                  <p className="truncate text-sm font-medium">{word.en}</p>
-                  <p className="text-muted-foreground truncate text-xs">
-                    {word.tr}
-                  </p>
-                </div>
-                <ArabicText text={word.ar} size="lg" />
-              </li>
-            );
-          })}
-        </ul>
+        {pictured.length > 0 && (
+          <ul className="grid grid-cols-2 gap-3 lg:grid-cols-3">
+            {pictured.map((word) => (
+              <PictureCard key={word.id} word={word} />
+            ))}
+          </ul>
+        )}
+        {plain.length > 0 && (
+          <ul className="grid gap-2 sm:grid-cols-2">
+            {plain.map((word) => (
+              <WordRow key={word.id} word={word} />
+            ))}
+          </ul>
+        )}
       </div>
 
       <div className="flex justify-end">

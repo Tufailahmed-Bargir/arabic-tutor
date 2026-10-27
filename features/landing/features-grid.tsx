@@ -4,7 +4,7 @@ import {
   CalendarCheck,
   Languages,
   Repeat,
-  Type,
+  ImageIcon,
 } from "lucide-react";
 
 const FEATURES = [
@@ -14,9 +14,9 @@ const FEATURES = [
     body: "Short, focused lessons that build on each other. Learn, listen, then prove it in a quick quiz. Your streak keeps you honest.",
   },
   {
-    icon: Type,
-    title: "The full alphabet",
-    body: "All 28 letters in all four forms (alone, start, middle, end) with sounds, example words and audio.",
+    icon: ImageIcon,
+    title: "Learn from pictures",
+    body: "Real photos for everyday words, plus picture quizzes: name the photo, pick its Arabic word or find the picture that matches.",
   },
   {
     icon: AudioLines,

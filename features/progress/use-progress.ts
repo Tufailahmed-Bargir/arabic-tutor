@@ -1,7 +1,7 @@
 "use client";
 
 import { useSyncExternalStore } from "react";
-import { LESSONS, getLesson } from "@/features/curriculum/lessons";
+import { getLesson } from "@/features/curriculum/lessons";
 import { toDateKey, addDays } from "@/lib/date";
 import { isDue, newCard, review, type Rating } from "@/lib/srs";
 import {
@@ -131,6 +131,12 @@ export const progressActions = {
     );
   },
 
+  /** Counts a finished practice round towards today's streak and activity. */
+  recordActivity() {
+    const today = toDateKey();
+    commit(withActivity(current(), today));
+  },
+
   setPrefs(prefs: Partial<ProgressState["prefs"]>) {
     const s = current();
     commit({ ...s, prefs: { ...s.prefs, ...prefs } });
@@ -215,9 +221,3 @@ export function dueWordIds(s: ProgressState, today: string): string[] {
     .filter(([, card]) => isDue(card, today))
     .map(([id]) => id);
 }
-
-export function completedDays(s: ProgressState): Set<number> {
-  return new Set(Object.keys(s.completed).map(Number));
-}
-
-export const TOTAL_DAYS = LESSONS.length;

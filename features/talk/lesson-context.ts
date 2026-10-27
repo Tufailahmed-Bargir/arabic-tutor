@@ -1,4 +1,9 @@
-import { LESSONS, getWord } from "@/features/curriculum/lessons";
+import {
+  LESSONS,
+  completedCourseDays,
+  getLesson,
+  getWord,
+} from "@/features/curriculum/lessons";
 import type { Word } from "@/features/curriculum/types";
 import type { ProgressState } from "@/lib/storage";
 import { SCENARIOS, getScenario } from "./scenarios";
@@ -25,12 +30,10 @@ export interface TalkContext {
 
 function levelFor(completedCount: number): string {
   if (completedCount < 8)
-    return "Absolute beginner, still learning the letters and sounds";
-  if (completedCount < 16)
-    return "Beginner, can read letters and knows basic phrases";
-  if (completedCount < 31)
+    return "Beginner who already reads the Arabic letters, learning basic phrases";
+  if (completedCount < 23)
     return "Advanced beginner, ready for short sentences";
-  if (completedCount < 45)
+  if (completedCount < 37)
     return "Elementary (A1), knows present-tense verbs and everyday topics";
   return "Pre-intermediate (A2), can use past, future and negation; push for longer answers and opinions";
 }
@@ -42,9 +45,9 @@ export function listTopics(completed: ProgressState["completed"]): {
   lessons: TalkTopic[];
   scenarios: TalkTopic[];
 } {
-  const done = new Set(Object.keys(completed).map(Number));
+  const done = completedCourseDays(completed);
   const reached = LESSONS.filter(
-    (l) => l.day === 1 || done.has(l.day) || done.has(l.day - 1),
+    (l) => l === LESSONS[0] || done.has(l.day) || done.has(l.day - 1),
   );
   return {
     lessons: reached.map((l) => ({
@@ -65,7 +68,10 @@ export function defaultTopicId(completed: ProgressState["completed"]): string {
   const latest = Object.entries(completed).sort(([, a], [, b]) =>
     b.completedAt.localeCompare(a.completedAt),
   )[0];
-  return lessonTopicId(latest ? Number(latest[0]) : 1);
+  const day = latest ? Number(latest[0]) : undefined;
+  return lessonTopicId(
+    day !== undefined && getLesson(day) ? day : LESSONS[0]!.day,
+  );
 }
 
 function vocabLine(words: readonly Word[]): string {
@@ -76,7 +82,7 @@ export function buildTalkContext(
   completed: ProgressState["completed"],
   topicId: string | null,
 ): TalkContext {
-  const level = levelFor(Object.keys(completed).length);
+  const level = levelFor(completedCourseDays(completed).size);
   const id = topicId ?? defaultTopicId(completed);
 
   const scenario = id.startsWith("scenario-")
