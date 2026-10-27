@@ -91,55 +91,69 @@ describe("typing answers", () => {
 
 describe("picture quizzes", () => {
   const pool = pictureWords(ALL_LESSONS.flatMap((l) => l.words));
+  const ARABIC_SCRIPT = /[؀-ۿ]/;
+  const quizzes = SEEDS.flatMap((seed) => buildPictureQuiz(pool, seed, 30));
 
   test("there are plenty of pictured words to quiz on", () => {
     expect(pool.length).toBeGreaterThan(50);
   });
 
-  test("every option is distinct, unambiguous and has a photo behind it", () => {
-    for (const seed of SEEDS) {
-      for (const c of buildPictureQuiz(pool, seed, 30)) {
-        const answer = getWord(c.answerId)!;
-        expect(c.options.filter((o) => o.id === c.answerId)).toHaveLength(1);
-        expect(c.options).toHaveLength(4);
+  test("a quiz uses all three Arabic-first question styles", () => {
+    const variants = new Set(
+      buildPictureQuiz(pool, 1, 30).map((c) => c.variant),
+    );
+    expect(variants).toEqual(new Set(["image-ar", "ar-image", "listen-image"]));
+  });
 
-        const options = c.options.map((o) => getWord(o.id)!);
-        // Different words, different meanings, different photos.
-        expect(new Set(options.map((w) => w.en.toLowerCase())).size).toBe(4);
-        const sources = options.map((w) => getWordImage(w.id)!.src);
-        expect(new Set(sources).size).toBe(4);
-        if (c.variant === "image-ar") {
-          expect(new Set(options.map((w) => w.ar)).size).toBe(4);
-        }
-
-        if (c.variant === "en-image") {
-          expect(c.options.every((o) => o.image)).toBe(true);
-          expect(c.promptText).toBe(answer.en);
-        } else {
-          expect(c.promptImage).toBeDefined();
-          expect(c.options.every((o) => !o.image)).toBe(true);
-        }
+  // The learner is studying Arabic: English must never be the thing they read or choose.
+  test("no English appears in any prompt or option", () => {
+    for (const c of quizzes) {
+      expect(c.promptText).toBeUndefined();
+      for (const o of c.options) {
+        const arabicLabel = o.arabic && ARABIC_SCRIPT.test(o.label);
+        expect(arabicLabel || /^Picture \d$/.test(o.label)).toBe(true);
+      }
+      if (c.variant === "ar-image") {
+        expect(c.promptAr).toBe(getWord(c.answerId)!.ar);
       }
     }
   });
 
-  test("labels and alt text never give the answer away", () => {
-    for (const c of buildPictureQuiz(pool, 3, 30)) {
-      if (c.variant !== "en-image") continue;
-      for (const o of c.options) {
-        expect(o.label).toMatch(/^Picture \d$/);
+  test("every option is distinct, unambiguous and has a photo behind it", () => {
+    for (const c of quizzes) {
+      expect(c.options.filter((o) => o.id === c.answerId)).toHaveLength(1);
+      expect(c.options).toHaveLength(4);
+
+      const options = c.options.map((o) => getWord(o.id)!);
+      expect(new Set(options.map((w) => w.en.toLowerCase())).size).toBe(4);
+      expect(new Set(options.map((w) => w.ar)).size).toBe(4);
+      const sources = options.map((w) => getWordImage(w.id)!.src);
+      expect(new Set(sources).size).toBe(4);
+
+      if (c.variant === "image-ar") {
+        expect(c.promptImage).toBeDefined();
+        expect(c.options.every((o) => !o.image)).toBe(true);
+      } else {
+        expect(c.options.every((o) => o.image)).toBe(true);
       }
+    }
+  });
+
+  test("the photo-to-Arabic question never speaks its own answer", () => {
+    for (const c of quizzes.filter((q) => q.variant === "image-ar")) {
+      expect(c.audio).toBeUndefined();
+    }
+    for (const c of quizzes.filter((q) => q.variant !== "image-ar")) {
+      expect(c.audio).toBe(getWord(c.answerId)!.ar);
     }
   });
 
   test("look-alike photos never share a question", () => {
     const together = (a: string, b: string) =>
-      SEEDS.some((seed) =>
-        buildPictureQuiz(pool, seed, 40).some((c) => {
-          const ens = c.options.map((o) => getWord(o.id)!.en);
-          return ens.includes(a) && ens.includes(b);
-        }),
-      );
+      quizzes.some((c) => {
+        const ens = c.options.map((o) => getWord(o.id)!.en);
+        return ens.includes(a) && ens.includes(b);
+      });
     expect(together("star", "night")).toBe(false);
     expect(together("moon", "crescent")).toBe(false);
     expect(together("apples", "an apple")).toBe(false);
@@ -159,16 +173,18 @@ describe("picture quizzes", () => {
       const sources = answers.map((w) => getWordImage(w.id)!.src);
       const meanings = answers.map((w) => w.en.toLowerCase());
       expect(new Set(sources).size).toBe(sources.length);
-      // The same English gloss (house, water, bread…) never repeats as an answer.
       expect(new Set(meanings).size).toBe(meanings.length);
     }
   });
 
-  test("lesson quizzes include photo questions where the lesson has photos", () => {
+  test("lesson quizzes include Arabic photo questions where the lesson has photos", () => {
     const lesson = LESSONS.find((l) => pictureWords(l.words).length > 0)!;
-    const kinds = buildQuiz(lesson, 1)
+    const picture = buildQuiz(lesson, 1)
       .filter((e): e is ChoiceExercise => e.kind === "choice")
-      .map((e) => e.variant);
-    expect(kinds.some((v) => v === "image-en" || v === "en-image")).toBe(true);
+      .filter((e) => e.variant === "image-ar" || e.variant === "ar-image");
+    expect(picture.length).toBeGreaterThan(0);
+    for (const c of picture) {
+      expect(c.promptText).toBeUndefined();
+    }
   });
 });

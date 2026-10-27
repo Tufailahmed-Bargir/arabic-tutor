@@ -41,7 +41,7 @@ export interface Reveal {
 }
 
 export type ChoiceVariant =
-  "ar-en" | "en-ar" | "listen-en" | "image-en" | "image-ar" | "en-image";
+  "ar-en" | "en-ar" | "listen-en" | "image-ar" | "ar-image" | "listen-image";
 
 export interface ChoiceExercise {
   kind: "choice";
@@ -198,13 +198,13 @@ function meaningKey(word: Word): string {
   return group === -1 ? first : `group:${group}`;
 }
 
-type PictureVariant = "image-en" | "image-ar" | "en-image";
+/** Picture questions are Arabic-first: you read, hear or choose Arabic, never English. */
+type PictureVariant = "image-ar" | "ar-image" | "listen-image";
 
 function pictureDistractors(
   word: Word,
   pool: readonly Word[],
   rng: Rng,
-  variant: PictureVariant,
 ): Word[] {
   const image = getWordImage(word.id)!;
   const seenMeaning = new Set([meaningKey(word)]);
@@ -220,7 +220,7 @@ function pictureDistractors(
     const meaning = meaningKey(candidate);
     const arabic = arKey(candidate);
     if (seenImage.has(src) || seenMeaning.has(meaning)) continue;
-    if (variant === "image-ar" && seenArabic.has(arabic)) continue;
+    if (seenArabic.has(arabic)) continue;
     seenImage.add(src);
     seenMeaning.add(meaning);
     seenArabic.add(arabic);
@@ -235,25 +235,17 @@ function pictureChoice(
   pool: readonly Word[],
   rng: Rng,
 ): ChoiceExercise {
-  const picked = shuffle(
-    [word, ...pictureDistractors(word, pool, rng, variant)],
-    rng,
+  const picked = shuffle([word, ...pictureDistractors(word, pool, rng)], rng);
+  const options: Option[] = picked.map((w, i) =>
+    variant === "image-ar"
+      ? { id: w.id, label: w.ar, arabic: true }
+      : {
+          id: w.id,
+          label: `Picture ${i + 1}`,
+          arabic: false,
+          image: getWordImage(w.id, "large"),
+        },
   );
-  const options: Option[] = picked.map((w, i) => {
-    if (variant === "en-image") {
-      return {
-        id: w.id,
-        label: `Picture ${i + 1}`,
-        arabic: false,
-        image: getWordImage(w.id, "large"),
-      };
-    }
-    return {
-      id: w.id,
-      label: variant === "image-ar" ? w.ar : w.en,
-      arabic: variant === "image-ar",
-    };
-  });
   const base = {
     kind: "choice" as const,
     id: `${variant}:${word.id}`,
@@ -262,28 +254,34 @@ function pictureChoice(
     answerId: word.id,
     reveal: wordReveal(word),
   };
-  if (variant === "en-image") {
+  // Speaking the answer on "image-ar" would give it away, so only the picture-choosing
+  // variants carry audio.
+  if (variant === "image-ar") {
     return {
       ...base,
-      instruction: "Which picture is",
-      promptText: word.en,
+      instruction: "Choose the Arabic word for this picture",
+      promptImage: getWordImage(word.id, "large"),
+    };
+  }
+  if (variant === "ar-image") {
+    return {
+      ...base,
+      instruction: "Choose the picture for",
+      promptAr: word.ar,
       audio: word.ar,
     };
   }
   return {
     ...base,
-    instruction:
-      variant === "image-ar"
-        ? "Choose the Arabic for this picture"
-        : "What is this?",
-    promptImage: getWordImage(word.id, "large"),
+    instruction: "Listen and choose the picture",
+    audio: word.ar,
   };
 }
 
 const PICTURE_VARIANTS: readonly PictureVariant[] = [
-  "image-en",
-  "en-image",
   "image-ar",
+  "ar-image",
+  "listen-image",
 ];
 
 /** A standalone picture quiz over any pool of words; words without a photo are skipped. */
@@ -435,11 +433,11 @@ export function buildQuiz(lesson: Lesson, seed: number): Exercise[] {
     ...take(words, 1, 2).map((w) => wordChoice("listen-en", w, lesson, rng)),
   ];
 
-  // Two photo questions per lesson that has pictures, one in each direction.
+  // Up to two photo questions per lesson: Arabic for a photo, then a photo for an Arabic word.
   const lessonPictures = take(pictureWords(words), 0, 2);
   const pictureExercises = lessonPictures.map((w, i) =>
     pictureChoice(
-      i % 2 === 0 ? "image-en" : "en-image",
+      i % 2 === 0 ? "image-ar" : "ar-image",
       w,
       pictureWords(lesson.words),
       rng,

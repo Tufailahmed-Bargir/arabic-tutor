@@ -120,6 +120,7 @@ export function PicturesClient() {
         key={round}
         exercises={exercises}
         label="Picture quiz"
+        autoPlayAudio
         finishLabel="See my score"
         onFinish={(results) => {
           const result = scoreResults(results);
@@ -143,9 +144,9 @@ export function PicturesClient() {
               {QUESTIONS} questions, three ways to play
             </h2>
             <p className="text-muted-foreground text-sm">
-              Name the picture in English, pick the Arabic for it, or find the
-              picture that matches a word. {pool.length} pictures are in your
-              pool.
+              Pick the Arabic word for a photo, find the photo for an Arabic
+              word, or listen and choose the picture. {pool.length} pictures are
+              in your pool.
             </p>
           </div>
         </div>

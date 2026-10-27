@@ -16,7 +16,7 @@ const FEATURES = [
   {
     icon: ImageIcon,
     title: "Learn from pictures",
-    body: "Real photos for everyday words, plus picture quizzes: name the photo, pick its Arabic word or find the picture that matches.",
+    body: "Real photos for everyday words, plus picture quizzes: pick the Arabic word for a photo, find the photo for a word, or listen and choose.",
   },
   {
     icon: AudioLines,
