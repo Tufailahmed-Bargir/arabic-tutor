@@ -12,6 +12,7 @@ import {
   Trophy,
 } from "lucide-react";
 import { achievements, isEarned } from "@/features/challenges/challenges";
+import { ayahStrength } from "@/features/hifz/progress";
 import { PHRASE_COUNT } from "@/features/phrasebook/phrases";
 import { ArabicText } from "@/components/arabic-text";
 import { buttonVariants } from "@/components/ui/button";
@@ -65,6 +66,9 @@ export function DashboardClient() {
   const isNew =
     completedDays.size === 0 && Object.keys(progress.cards).length === 0;
   const earnedBadges = achievements(progress).filter(isEarned).length;
+  const memorisedAyat = Object.values(progress.hifz).filter(
+    (entry) => ayahStrength(entry) === "memorised",
+  ).length;
 
   return (
     <div className="space-y-5">
@@ -289,6 +293,26 @@ export function DashboardClient() {
             <span className="block font-medium">Phrasebook</span>
             <span className="text-muted-foreground block text-sm">
               {PHRASE_COUNT} ready-made sentences for real situations
+            </span>
+          </span>
+          <ArrowRight
+            className="text-muted-foreground size-4 transition-transform group-hover:translate-x-0.5"
+            aria-hidden
+          />
+        </Link>
+        <Link
+          href="/hifz"
+          className="group bg-card hover:bg-muted/50 flex items-center gap-4 rounded-xl border p-4 transition-colors sm:col-span-2"
+        >
+          <span className="grid size-11 shrink-0 place-items-center rounded-full bg-emerald-500/10 text-emerald-500">
+            <BookOpenCheck className="size-5" aria-hidden />
+          </span>
+          <span className="min-w-0 flex-1">
+            <span className="block font-medium">Hifz checker</span>
+            <span className="text-muted-foreground block text-sm">
+              {memorisedAyat > 0
+                ? `${memorisedAyat} ${memorisedAyat === 1 ? "ayah" : "ayat"} memorised · recite and get checked word by word`
+                : "Recite a surah from memory and get checked word by word"}
             </span>
           </span>
           <ArrowRight

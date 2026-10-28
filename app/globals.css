@@ -9,6 +9,9 @@
   --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
   --font-arabic: var(--font-noto-naskh), "Amiri", "Traditional Arabic", serif;
+  /* Amiri Quran is loaded by the hifz route only; elsewhere this falls back to Noto Naskh. */
+  --font-quran:
+    var(--font-amiri-quran), var(--font-noto-naskh), "Amiri Quran", serif;
   --font-mono: var(--font-geist-mono);
   --font-heading: var(--font-sans);
   --color-sidebar-ring: var(--sidebar-ring);

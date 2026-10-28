@@ -45,6 +45,18 @@ export const progressSchema = z.object({
       z.object({ completedAt: z.string(), score: z.number() }),
     )
     .default({}),
+  // Hifz recitation results per ayah, keyed "<surah>:<ayah>".
+  hifz: z
+    .record(
+      z.string(),
+      z.object({
+        clean: z.number(),
+        mistakes: z.number(),
+        lastClean: z.boolean(),
+        lastAt: z.string(),
+      }),
+    )
+    .default({}),
 });
 
 export type ProgressState = z.infer<typeof progressSchema>;
@@ -62,6 +74,7 @@ export function createInitialState(): ProgressState {
     talkSessions: 0,
     practice: {},
     challenges: {},
+    hifz: {},
   };
 }
 

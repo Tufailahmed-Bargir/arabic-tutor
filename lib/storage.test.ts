@@ -27,6 +27,18 @@ describe("parseState", () => {
     expect(state.talkSessions).toBe(2);
     expect(state.practice).toEqual({});
     expect(state.challenges).toEqual({});
+    expect(state.hifz).toEqual({});
+  });
+
+  test("keeps hifz results", () => {
+    const state = createInitialState();
+    state.hifz["112:1"] = {
+      clean: 2,
+      mistakes: 1,
+      lastClean: true,
+      lastAt: "2026-10-28T09:00:00.000Z",
+    };
+    expect(parseState(JSON.stringify(state)).hifz).toEqual(state.hifz);
   });
 
   test("keeps challenge results", () => {

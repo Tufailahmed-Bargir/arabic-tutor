@@ -1,0 +1,914 @@
+[
+  {
+    "id": 1,
+    "name": "Al-Fatihah",
+    "arabic": "الفاتحة",
+    "meaning": "The Opener",
+    "ayahs": 7,
+    "bismillah": false
+  },
+  {
+    "id": 2,
+    "name": "Al-Baqarah",
+    "arabic": "البقرة",
+    "meaning": "The Cow",
+    "ayahs": 286,
+    "bismillah": true
+  },
+  {
+    "id": 3,
+    "name": "Ali 'Imran",
+    "arabic": "آل عمران",
+    "meaning": "Family of Imran",
+    "ayahs": 200,
+    "bismillah": true
+  },
+  {
+    "id": 4,
+    "name": "An-Nisa",
+    "arabic": "النساء",
+    "meaning": "The Women",
+    "ayahs": 176,
+    "bismillah": true
+  },
+  {
+    "id": 5,
+    "name": "Al-Ma'idah",
+    "arabic": "المائدة",
+    "meaning": "The Table Spread",
+    "ayahs": 120,
+    "bismillah": true
+  },
+  {
+    "id": 6,
+    "name": "Al-An'am",
+    "arabic": "الأنعام",
+    "meaning": "The Cattle",
+    "ayahs": 165,
+    "bismillah": true
+  },
+  {
+    "id": 7,
+    "name": "Al-A'raf",
+    "arabic": "الأعراف",
+    "meaning": "The Heights",
+    "ayahs": 206,
+    "bismillah": true
+  },
+  {
+    "id": 8,
+    "name": "Al-Anfal",
+    "arabic": "الأنفال",
+    "meaning": "The Spoils of War",
+    "ayahs": 75,
+    "bismillah": true
+  },
+  {
+    "id": 9,
+    "name": "At-Tawbah",
+    "arabic": "التوبة",
+    "meaning": "The Repentance",
+    "ayahs": 129,
+    "bismillah": false
+  },
+  {
+    "id": 10,
+    "name": "Yunus",
+    "arabic": "يونس",
+    "meaning": "Jonah",
+    "ayahs": 109,
+    "bismillah": true
+  },
+  {
+    "id": 11,
+    "name": "Hud",
+    "arabic": "هود",
+    "meaning": "Hud",
+    "ayahs": 123,
+    "bismillah": true
+  },
+  {
+    "id": 12,
+    "name": "Yusuf",
+    "arabic": "يوسف",
+    "meaning": "Joseph",
+    "ayahs": 111,
+    "bismillah": true
+  },
+  {
+    "id": 13,
+    "name": "Ar-Ra'd",
+    "arabic": "الرعد",
+    "meaning": "The Thunder",
+    "ayahs": 43,
+    "bismillah": true
+  },
+  {
+    "id": 14,
+    "name": "Ibrahim",
+    "arabic": "ابراهيم",
+    "meaning": "Abraham",
+    "ayahs": 52,
+    "bismillah": true
+  },
+  {
+    "id": 15,
+    "name": "Al-Hijr",
+    "arabic": "الحجر",
+    "meaning": "The Rocky Tract",
+    "ayahs": 99,
+    "bismillah": true
+  },
+  {
+    "id": 16,
+    "name": "An-Nahl",
+    "arabic": "النحل",
+    "meaning": "The Bee",
+    "ayahs": 128,
+    "bismillah": true
+  },
+  {
+    "id": 17,
+    "name": "Al-Isra",
+    "arabic": "الإسراء",
+    "meaning": "The Night Journey",
+    "ayahs": 111,
+    "bismillah": true
+  },
+  {
+    "id": 18,
+    "name": "Al-Kahf",
+    "arabic": "الكهف",
+    "meaning": "The Cave",
+    "ayahs": 110,
+    "bismillah": true
+  },
+  {
+    "id": 19,
+    "name": "Maryam",
+    "arabic": "مريم",
+    "meaning": "Mary",
+    "ayahs": 98,
+    "bismillah": true
+  },
+  {
+    "id": 20,
+    "name": "Taha",
+    "arabic": "طه",
+    "meaning": "Ta-Ha",
+    "ayahs": 135,
+    "bismillah": true
+  },
+  {
+    "id": 21,
+    "name": "Al-Anbya",
+    "arabic": "الأنبياء",
+    "meaning": "The Prophets",
+    "ayahs": 112,
+    "bismillah": true
+  },
+  {
+    "id": 22,
+    "name": "Al-Hajj",
+    "arabic": "الحج",
+    "meaning": "The Pilgrimage",
+    "ayahs": 78,
+    "bismillah": true
+  },
+  {
+    "id": 23,
+    "name": "Al-Mu'minun",
+    "arabic": "المؤمنون",
+    "meaning": "The Believers",
+    "ayahs": 118,
+    "bismillah": true
+  },
+  {
+    "id": 24,
+    "name": "An-Nur",
+    "arabic": "النور",
+    "meaning": "The Light",
+    "ayahs": 64,
+    "bismillah": true
+  },
+  {
+    "id": 25,
+    "name": "Al-Furqan",
+    "arabic": "الفرقان",
+    "meaning": "The Criterion",
+    "ayahs": 77,
+    "bismillah": true
+  },
+  {
+    "id": 26,
+    "name": "Ash-Shu'ara",
+    "arabic": "الشعراء",
+    "meaning": "The Poets",
+    "ayahs": 227,
+    "bismillah": true
+  },
+  {
+    "id": 27,
+    "name": "An-Naml",
+    "arabic": "النمل",
+    "meaning": "The Ant",
+    "ayahs": 93,
+    "bismillah": true
+  },
+  {
+    "id": 28,
+    "name": "Al-Qasas",
+    "arabic": "القصص",
+    "meaning": "The Stories",
+    "ayahs": 88,
+    "bismillah": true
+  },
+  {
+    "id": 29,
+    "name": "Al-'Ankabut",
+    "arabic": "العنكبوت",
+    "meaning": "The Spider",
+    "ayahs": 69,
+    "bismillah": true
+  },
+  {
+    "id": 30,
+    "name": "Ar-Rum",
+    "arabic": "الروم",
+    "meaning": "The Romans",
+    "ayahs": 60,
+    "bismillah": true
+  },
+  {
+    "id": 31,
+    "name": "Luqman",
+    "arabic": "لقمان",
+    "meaning": "Luqman",
+    "ayahs": 34,
+    "bismillah": true
+  },
+  {
+    "id": 32,
+    "name": "As-Sajdah",
+    "arabic": "السجدة",
+    "meaning": "The Prostration",
+    "ayahs": 30,
+    "bismillah": true
+  },
+  {
+    "id": 33,
+    "name": "Al-Ahzab",
+    "arabic": "الأحزاب",
+    "meaning": "The Combined Forces",
+    "ayahs": 73,
+    "bismillah": true
+  },
+  {
+    "id": 34,
+    "name": "Saba",
+    "arabic": "سبإ",
+    "meaning": "Sheba",
+    "ayahs": 54,
+    "bismillah": true
+  },
+  {
+    "id": 35,
+    "name": "Fatir",
+    "arabic": "فاطر",
+    "meaning": "Originator",
+    "ayahs": 45,
+    "bismillah": true
+  },
+  {
+    "id": 36,
+    "name": "Ya-Sin",
+    "arabic": "يس",
+    "meaning": "Ya Sin",
+    "ayahs": 83,
+    "bismillah": true
+  },
+  {
+    "id": 37,
+    "name": "As-Saffat",
+    "arabic": "الصافات",
+    "meaning": "Those who set the Ranks",
+    "ayahs": 182,
+    "bismillah": true
+  },
+  {
+    "id": 38,
+    "name": "Sad",
+    "arabic": "ص",
+    "meaning": "The Letter \"Saad\"",
+    "ayahs": 88,
+    "bismillah": true
+  },
+  {
+    "id": 39,
+    "name": "Az-Zumar",
+    "arabic": "الزمر",
+    "meaning": "The Troops",
+    "ayahs": 75,
+    "bismillah": true
+  },
+  {
+    "id": 40,
+    "name": "Ghafir",
+    "arabic": "غافر",
+    "meaning": "The Forgiver",
+    "ayahs": 85,
+    "bismillah": true
+  },
+  {
+    "id": 41,
+    "name": "Fussilat",
+    "arabic": "فصلت",
+    "meaning": "Explained in Detail",
+    "ayahs": 54,
+    "bismillah": true
+  },
+  {
+    "id": 42,
+    "name": "Ash-Shuraa",
+    "arabic": "الشورى",
+    "meaning": "The Consultation",
+    "ayahs": 53,
+    "bismillah": true
+  },
+  {
+    "id": 43,
+    "name": "Az-Zukhruf",
+    "arabic": "الزخرف",
+    "meaning": "The Ornaments of Gold",
+    "ayahs": 89,
+    "bismillah": true
+  },
+  {
+    "id": 44,
+    "name": "Ad-Dukhan",
+    "arabic": "الدخان",
+    "meaning": "The Smoke",
+    "ayahs": 59,
+    "bismillah": true
+  },
+  {
+    "id": 45,
+    "name": "Al-Jathiyah",
+    "arabic": "الجاثية",
+    "meaning": "The Crouching",
+    "ayahs": 37,
+    "bismillah": true
+  },
+  {
+    "id": 46,
+    "name": "Al-Ahqaf",
+    "arabic": "الأحقاف",
+    "meaning": "The Wind-Curved Sandhills",
+    "ayahs": 35,
+    "bismillah": true
+  },
+  {
+    "id": 47,
+    "name": "Muhammad",
+    "arabic": "محمد",
+    "meaning": "Muhammad",
+    "ayahs": 38,
+    "bismillah": true
+  },
+  {
+    "id": 48,
+    "name": "Al-Fath",
+    "arabic": "الفتح",
+    "meaning": "The Victory",
+    "ayahs": 29,
+    "bismillah": true
+  },
+  {
+    "id": 49,
+    "name": "Al-Hujurat",
+    "arabic": "الحجرات",
+    "meaning": "The Rooms",
+    "ayahs": 18,
+    "bismillah": true
+  },
+  {
+    "id": 50,
+    "name": "Qaf",
+    "arabic": "ق",
+    "meaning": "The Letter \"Qaf\"",
+    "ayahs": 45,
+    "bismillah": true
+  },
+  {
+    "id": 51,
+    "name": "Adh-Dhariyat",
+    "arabic": "الذاريات",
+    "meaning": "The Winnowing Winds",
+    "ayahs": 60,
+    "bismillah": true
+  },
+  {
+    "id": 52,
+    "name": "At-Tur",
+    "arabic": "الطور",
+    "meaning": "The Mount",
+    "ayahs": 49,
+    "bismillah": true
+  },
+  {
+    "id": 53,
+    "name": "An-Najm",
+    "arabic": "النجم",
+    "meaning": "The Star",
+    "ayahs": 62,
+    "bismillah": true
+  },
+  {
+    "id": 54,
+    "name": "Al-Qamar",
+    "arabic": "القمر",
+    "meaning": "The Moon",
+    "ayahs": 55,
+    "bismillah": true
+  },
+  {
+    "id": 55,
+    "name": "Ar-Rahman",
+    "arabic": "الرحمن",
+    "meaning": "The Beneficent",
+    "ayahs": 78,
+    "bismillah": true
+  },
+  {
+    "id": 56,
+    "name": "Al-Waqi'ah",
+    "arabic": "الواقعة",
+    "meaning": "The Inevitable",
+    "ayahs": 96,
+    "bismillah": true
+  },
+  {
+    "id": 57,
+    "name": "Al-Hadid",
+    "arabic": "الحديد",
+    "meaning": "The Iron",
+    "ayahs": 29,
+    "bismillah": true
+  },
+  {
+    "id": 58,
+    "name": "Al-Mujadila",
+    "arabic": "المجادلة",
+    "meaning": "The Pleading Woman",
+    "ayahs": 22,
+    "bismillah": true
+  },
+  {
+    "id": 59,
+    "name": "Al-Hashr",
+    "arabic": "الحشر",
+    "meaning": "The Exile",
+    "ayahs": 24,
+    "bismillah": true
+  },
+  {
+    "id": 60,
+    "name": "Al-Mumtahanah",
+    "arabic": "الممتحنة",
+    "meaning": "She that is to be examined",
+    "ayahs": 13,
+    "bismillah": true
+  },
+  {
+    "id": 61,
+    "name": "As-Saf",
+    "arabic": "الصف",
+    "meaning": "The Ranks",
+    "ayahs": 14,
+    "bismillah": true
+  },
+  {
+    "id": 62,
+    "name": "Al-Jumu'ah",
+    "arabic": "الجمعة",
+    "meaning": "The Congregation, Friday",
+    "ayahs": 11,
+    "bismillah": true
+  },
+  {
+    "id": 63,
+    "name": "Al-Munafiqun",
+    "arabic": "المنافقون",
+    "meaning": "The Hypocrites",
+    "ayahs": 11,
+    "bismillah": true
+  },
+  {
+    "id": 64,
+    "name": "At-Taghabun",
+    "arabic": "التغابن",
+    "meaning": "The Mutual Disillusion",
+    "ayahs": 18,
+    "bismillah": true
+  },
+  {
+    "id": 65,
+    "name": "At-Talaq",
+    "arabic": "الطلاق",
+    "meaning": "The Divorce",
+    "ayahs": 12,
+    "bismillah": true
+  },
+  {
+    "id": 66,
+    "name": "At-Tahrim",
+    "arabic": "التحريم",
+    "meaning": "The Prohibition",
+    "ayahs": 12,
+    "bismillah": true
+  },
+  {
+    "id": 67,
+    "name": "Al-Mulk",
+    "arabic": "الملك",
+    "meaning": "The Sovereignty",
+    "ayahs": 30,
+    "bismillah": true
+  },
+  {
+    "id": 68,
+    "name": "Al-Qalam",
+    "arabic": "القلم",
+    "meaning": "The Pen",
+    "ayahs": 52,
+    "bismillah": true
+  },
+  {
+    "id": 69,
+    "name": "Al-Haqqah",
+    "arabic": "الحاقة",
+    "meaning": "The Reality",
+    "ayahs": 52,
+    "bismillah": true
+  },
+  {
+    "id": 70,
+    "name": "Al-Ma'arij",
+    "arabic": "المعارج",
+    "meaning": "The Ascending Stairways",
+    "ayahs": 44,
+    "bismillah": true
+  },
+  {
+    "id": 71,
+    "name": "Nuh",
+    "arabic": "نوح",
+    "meaning": "Noah",
+    "ayahs": 28,
+    "bismillah": true
+  },
+  {
+    "id": 72,
+    "name": "Al-Jinn",
+    "arabic": "الجن",
+    "meaning": "The Jinn",
+    "ayahs": 28,
+    "bismillah": true
+  },
+  {
+    "id": 73,
+    "name": "Al-Muzzammil",
+    "arabic": "المزمل",
+    "meaning": "The Enshrouded One",
+    "ayahs": 20,
+    "bismillah": true
+  },
+  {
+    "id": 74,
+    "name": "Al-Muddaththir",
+    "arabic": "المدثر",
+    "meaning": "The Cloaked One",
+    "ayahs": 56,
+    "bismillah": true
+  },
+  {
+    "id": 75,
+    "name": "Al-Qiyamah",
+    "arabic": "القيامة",
+    "meaning": "The Resurrection",
+    "ayahs": 40,
+    "bismillah": true
+  },
+  {
+    "id": 76,
+    "name": "Al-Insan",
+    "arabic": "الانسان",
+    "meaning": "The Man",
+    "ayahs": 31,
+    "bismillah": true
+  },
+  {
+    "id": 77,
+    "name": "Al-Mursalat",
+    "arabic": "المرسلات",
+    "meaning": "The Emissaries",
+    "ayahs": 50,
+    "bismillah": true
+  },
+  {
+    "id": 78,
+    "name": "An-Naba",
+    "arabic": "النبإ",
+    "meaning": "The Tidings",
+    "ayahs": 40,
+    "bismillah": true
+  },
+  {
+    "id": 79,
+    "name": "An-Nazi'at",
+    "arabic": "النازعات",
+    "meaning": "Those who drag forth",
+    "ayahs": 46,
+    "bismillah": true
+  },
+  {
+    "id": 80,
+    "name": "'Abasa",
+    "arabic": "عبس",
+    "meaning": "He Frowned",
+    "ayahs": 42,
+    "bismillah": true
+  },
+  {
+    "id": 81,
+    "name": "At-Takwir",
+    "arabic": "التكوير",
+    "meaning": "The Overthrowing",
+    "ayahs": 29,
+    "bismillah": true
+  },
+  {
+    "id": 82,
+    "name": "Al-Infitar",
+    "arabic": "الإنفطار",
+    "meaning": "The Cleaving",
+    "ayahs": 19,
+    "bismillah": true
+  },
+  {
+    "id": 83,
+    "name": "Al-Mutaffifin",
+    "arabic": "المطففين",
+    "meaning": "The Defrauding",
+    "ayahs": 36,
+    "bismillah": true
+  },
+  {
+    "id": 84,
+    "name": "Al-Inshiqaq",
+    "arabic": "الإنشقاق",
+    "meaning": "The Sundering",
+    "ayahs": 25,
+    "bismillah": true
+  },
+  {
+    "id": 85,
+    "name": "Al-Buruj",
+    "arabic": "البروج",
+    "meaning": "The Mansions of the Stars",
+    "ayahs": 22,
+    "bismillah": true
+  },
+  {
+    "id": 86,
+    "name": "At-Tariq",
+    "arabic": "الطارق",
+    "meaning": "The Nightcommer",
+    "ayahs": 17,
+    "bismillah": true
+  },
+  {
+    "id": 87,
+    "name": "Al-A'la",
+    "arabic": "الأعلى",
+    "meaning": "The Most High",
+    "ayahs": 19,
+    "bismillah": true
+  },
+  {
+    "id": 88,
+    "name": "Al-Ghashiyah",
+    "arabic": "الغاشية",
+    "meaning": "The Overwhelming",
+    "ayahs": 26,
+    "bismillah": true
+  },
+  {
+    "id": 89,
+    "name": "Al-Fajr",
+    "arabic": "الفجر",
+    "meaning": "The Dawn",
+    "ayahs": 30,
+    "bismillah": true
+  },
+  {
+    "id": 90,
+    "name": "Al-Balad",
+    "arabic": "البلد",
+    "meaning": "The City",
+    "ayahs": 20,
+    "bismillah": true
+  },
+  {
+    "id": 91,
+    "name": "Ash-Shams",
+    "arabic": "الشمس",
+    "meaning": "The Sun",
+    "ayahs": 15,
+    "bismillah": true
+  },
+  {
+    "id": 92,
+    "name": "Al-Layl",
+    "arabic": "الليل",
+    "meaning": "The Night",
+    "ayahs": 21,
+    "bismillah": true
+  },
+  {
+    "id": 93,
+    "name": "Ad-Duhaa",
+    "arabic": "الضحى",
+    "meaning": "The Morning Hours",
+    "ayahs": 11,
+    "bismillah": true
+  },
+  {
+    "id": 94,
+    "name": "Ash-Sharh",
+    "arabic": "الشرح",
+    "meaning": "The Relief",
+    "ayahs": 8,
+    "bismillah": true
+  },
+  {
+    "id": 95,
+    "name": "At-Tin",
+    "arabic": "التين",
+    "meaning": "The Fig",
+    "ayahs": 8,
+    "bismillah": true
+  },
+  {
+    "id": 96,
+    "name": "Al-'Alaq",
+    "arabic": "العلق",
+    "meaning": "The Clot",
+    "ayahs": 19,
+    "bismillah": true
+  },
+  {
+    "id": 97,
+    "name": "Al-Qadr",
+    "arabic": "القدر",
+    "meaning": "The Power",
+    "ayahs": 5,
+    "bismillah": true
+  },
+  {
+    "id": 98,
+    "name": "Al-Bayyinah",
+    "arabic": "البينة",
+    "meaning": "The Clear Proof",
+    "ayahs": 8,
+    "bismillah": true
+  },
+  {
+    "id": 99,
+    "name": "Az-Zalzalah",
+    "arabic": "الزلزلة",
+    "meaning": "The Earthquake",
+    "ayahs": 8,
+    "bismillah": true
+  },
+  {
+    "id": 100,
+    "name": "Al-'Adiyat",
+    "arabic": "العاديات",
+    "meaning": "The Courser",
+    "ayahs": 11,
+    "bismillah": true
+  },
+  {
+    "id": 101,
+    "name": "Al-Qari'ah",
+    "arabic": "القارعة",
+    "meaning": "The Calamity",
+    "ayahs": 11,
+    "bismillah": true
+  },
+  {
+    "id": 102,
+    "name": "At-Takathur",
+    "arabic": "التكاثر",
+    "meaning": "The Rivalry in world increase",
+    "ayahs": 8,
+    "bismillah": true
+  },
+  {
+    "id": 103,
+    "name": "Al-'Asr",
+    "arabic": "العصر",
+    "meaning": "The Declining Day",
+    "ayahs": 3,
+    "bismillah": true
+  },
+  {
+    "id": 104,
+    "name": "Al-Humazah",
+    "arabic": "الهمزة",
+    "meaning": "The Traducer",
+    "ayahs": 9,
+    "bismillah": true
+  },
+  {
+    "id": 105,
+    "name": "Al-Fil",
+    "arabic": "الفيل",
+    "meaning": "The Elephant",
+    "ayahs": 5,
+    "bismillah": true
+  },
+  {
+    "id": 106,
+    "name": "Quraysh",
+    "arabic": "قريش",
+    "meaning": "Quraysh",
+    "ayahs": 4,
+    "bismillah": true
+  },
+  {
+    "id": 107,
+    "name": "Al-Ma'un",
+    "arabic": "الماعون",
+    "meaning": "The Small kindnesses",
+    "ayahs": 7,
+    "bismillah": true
+  },
+  {
+    "id": 108,
+    "name": "Al-Kawthar",
+    "arabic": "الكوثر",
+    "meaning": "The Abundance",
+    "ayahs": 3,
+    "bismillah": true
+  },
+  {
+    "id": 109,
+    "name": "Al-Kafirun",
+    "arabic": "الكافرون",
+    "meaning": "The Disbelievers",
+    "ayahs": 6,
+    "bismillah": true
+  },
+  {
+    "id": 110,
+    "name": "An-Nasr",
+    "arabic": "النصر",
+    "meaning": "The Divine Support",
+    "ayahs": 3,
+    "bismillah": true
+  },
+  {
+    "id": 111,
+    "name": "Al-Masad",
+    "arabic": "المسد",
+    "meaning": "The Palm Fiber",
+    "ayahs": 5,
+    "bismillah": true
+  },
+  {
+    "id": 112,
+    "name": "Al-Ikhlas",
+    "arabic": "الإخلاص",
+    "meaning": "The Sincerity",
+    "ayahs": 4,
+    "bismillah": true
+  },
+  {
+    "id": 113,
+    "name": "Al-Falaq",
+    "arabic": "الفلق",
+    "meaning": "The Daybreak",
+    "ayahs": 5,
+    "bismillah": true
+  },
+  {
+    "id": 114,
+    "name": "An-Nas",
+    "arabic": "الناس",
+    "meaning": "Mankind",
+    "ayahs": 6,
+    "bismillah": true
+  }
+]

@@ -2,6 +2,7 @@
 
 import { useSyncExternalStore } from "react";
 import { getLesson } from "@/features/curriculum/lessons";
+import { recordOutcomes } from "@/features/hifz/progress";
 import { toDateKey, addDays } from "@/lib/date";
 import { isDue, newCard, review, type Rating } from "@/lib/srs";
 import {
@@ -205,6 +206,30 @@ export const progressActions = {
               score: Math.max(previous?.score ?? 0, score),
             },
           },
+        },
+        today,
+      ),
+    );
+  },
+
+  /** Records which ayat of a hifz recitation were clean and which had mistakes. */
+  recordHifz(
+    surah: number,
+    outcomes: readonly { ayah: number; clean: boolean }[],
+  ) {
+    if (outcomes.length === 0) return;
+    const today = toDateKey();
+    const s = current();
+    commit(
+      withActivity(
+        {
+          ...s,
+          hifz: recordOutcomes(
+            s.hifz,
+            surah,
+            outcomes,
+            new Date().toISOString(),
+          ),
         },
         today,
       ),

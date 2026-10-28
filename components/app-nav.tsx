@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
   BookOpen,
+  BookOpenCheck,
   GraduationCap,
   LayoutDashboard,
   Dumbbell,
@@ -36,6 +37,7 @@ const SECONDARY: NavItem[] = [
   { href: "/challenges", label: "Challenges", icon: Trophy },
   { href: "/phrases", label: "Phrasebook", icon: MessageSquareQuote },
   { href: "/pictures", label: "Picture quiz", icon: ImageIcon },
+  { href: "/hifz", label: "Hifz checker", icon: BookOpenCheck },
   { href: "/settings", label: "Settings", icon: Settings },
 ];
 

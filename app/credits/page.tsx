@@ -4,8 +4,8 @@ import { commonsCredits } from "@/features/curriculum/images";
 import { SITE_NAME } from "@/features/landing/site";
 
 export const metadata: Metadata = {
-  title: "Photo credits",
-  description: `Attribution for the photographs used in ${SITE_NAME} vocabulary lessons.`,
+  title: "Credits",
+  description: `Attribution for the photographs, Quran text and typefaces used in ${SITE_NAME}.`,
   alternates: { canonical: "/credits" },
 };
 
@@ -21,6 +21,20 @@ export default function CreditsPage() {
           Vocabulary photos come from Wikimedia Commons, Unsplash and Pexels.
           Unsplash and Pexels photos are used under their free licences. Each
           Commons photo is listed below with its author and licence.
+        </p>
+        <p className="text-muted-foreground text-sm">
+          The hifz checker uses the Uthmani Quran text and word-by-word data
+          from{" "}
+          <a
+            href="https://quran.com"
+            className="underline underline-offset-4"
+            rel="noopener noreferrer"
+          >
+            Quran.com
+          </a>{" "}
+          (Quran Foundation), set in the Amiri Quran typeface (SIL Open Font
+          Licence). Recitation is checked with the browser’s built-in speech
+          recognition.
         </p>
         <Link href="/" className="text-sm underline underline-offset-4">
           Back to {SITE_NAME}

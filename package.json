@@ -10,7 +10,8 @@
     "postinstall": "node -e \"require('fs').rmSync('node_modules/typescript/node_modules',{recursive:true,force:true})\"",
     "typecheck": "next typegen && tsc --noEmit",
     "format": "prettier --write .",
-    "test": "bun test"
+    "test": "bun test",
+    "build:quran": "bun scripts/build-quran.ts"
   },
   "dependencies": {
     "@base-ui/react": "^1.9.0",
