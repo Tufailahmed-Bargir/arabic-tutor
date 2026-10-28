@@ -130,6 +130,8 @@ export function streamArabic(handlers: StreamHandlers): ArabicStream | null {
 
   let stopped = false;
   let startedAt = 0;
+  // Android Chrome can repeat a final segment, or resend it with the new words appended.
+  let lastFinal = "";
   let resolveEnded = () => {};
   const ended = new Promise<void>((resolve) => {
     resolveEnded = resolve;
@@ -138,6 +140,7 @@ export function streamArabic(handlers: StreamHandlers): ArabicStream | null {
 
   const begin = () => {
     startedAt = Date.now();
+    lastFinal = "";
     try {
       recognition.start();
     } catch {
@@ -153,7 +156,13 @@ export function streamArabic(handlers: StreamHandlers): ArabicStream | null {
       const result = event.results[i];
       const text = result?.[0]?.transcript ?? "";
       if (result?.isFinal) {
-        if (text.trim()) handlers.onFinal(text);
+        const clean = text.trim().replace(/\s+/g, " ");
+        const repeated =
+          lastFinal !== "" &&
+          (clean === lastFinal || clean.startsWith(`${lastFinal} `));
+        const fresh = repeated ? clean.slice(lastFinal.length).trim() : clean;
+        if (clean) lastFinal = clean;
+        if (fresh) handlers.onFinal(fresh);
       } else {
         interim += `${text} `;
       }

@@ -1,4 +1,5 @@
-import { alignWords, type WordResult } from "./align";
+import { alignWords, type ExpectedForm, type WordResult } from "./align";
+import { MUQATTAAT_IDS, spelledLetters } from "./muqattaat";
 import { matchForm, tokenize } from "./normalize";
 import type { QuranWord } from "./types";
 
@@ -24,15 +25,24 @@ export function createSession(wordCount: number): HifzSession {
   };
 }
 
-export function expectedForms(words: readonly QuranWord[]): string[] {
-  return words.map((w) => matchForm(w.imlaei));
+/** Comparison forms per word; disconnected letters also accept their recited letter names. */
+export function expectedForms(words: readonly QuranWord[]): ExpectedForm[] {
+  return words.map((w) =>
+    MUQATTAAT_IDS.has(w.id)
+      ? [matchForm(w.imlaei), spelledLetters(w.imlaei)]
+      : matchForm(w.imlaei),
+  );
 }
 
 export function isFinished(session: HifzSession): boolean {
   return session.cursor >= session.results.length;
 }
 
-function window(forms: readonly string[], cursor: number, heardCount: number) {
+function window(
+  forms: readonly ExpectedForm[],
+  cursor: number,
+  heardCount: number,
+) {
   return forms.slice(cursor, cursor + heardCount * 2 + LOOKAHEAD);
 }
 
@@ -45,7 +55,7 @@ export interface Applied {
 function commit(
   session: HifzSession,
   heard: string[],
-  forms: readonly string[],
+  forms: readonly ExpectedForm[],
   complete: boolean,
 ): Applied {
   if (isFinished(session) || heard.length === 0) {
@@ -78,7 +88,7 @@ function commit(
 /** Settles words against a final transcript segment from the recogniser. */
 export function applyFinal(
   session: HifzSession,
-  forms: readonly string[],
+  forms: readonly ExpectedForm[],
   text: string,
 ): Applied {
   return commit(session, [...session.carry, ...tokenize(text)], forms, false);
@@ -90,7 +100,7 @@ export function applyFinal(
  */
 export function previewInterim(
   session: HifzSession,
-  forms: readonly string[],
+  forms: readonly ExpectedForm[],
   text: string,
 ): number[] {
   const heard = [...session.carry, ...tokenize(text)];
@@ -110,7 +120,7 @@ export function previewInterim(
  */
 export function finishSession(
   session: HifzSession,
-  forms: readonly string[],
+  forms: readonly ExpectedForm[],
 ): HifzSession {
   const remaining = forms.length - session.cursor;
   const complete = remaining > 0 && remaining <= session.carry.length + 2;

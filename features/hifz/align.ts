@@ -38,6 +38,21 @@ export function wordSimilarity(heard: string, expected: string): number {
 
 // Unrelated Arabic words still share letters like ا and ل, so below the threshold every pairing
 // scores about the same; otherwise the aligner would pair noise with words instead of skipping.
+/** One expected word: its comparison form, or several accepted forms. */
+export type ExpectedForm = string | readonly string[];
+
+function primary(form: ExpectedForm): string {
+  return typeof form === "string" ? form : (form[0] ?? "");
+}
+
+function formSimilarity(heard: string, form: ExpectedForm): number {
+  if (typeof form === "string") return wordSimilarity(heard, form);
+  return Math.max(0, ...form.map((f) => wordSimilarity(heard, f)));
+}
+
+// The most heard words one expected word may absorb: كهيعص is recited as five letter names.
+const MAX_MERGE = 5;
+
 function pairScore(similarity: number): number {
   return similarity >= CORRECT_SIMILARITY ? similarity : -1 + 0.2 * similarity;
 }
@@ -47,7 +62,7 @@ const Op = {
   Extra: 1,
   Skip: 2,
   Pair: 3,
-  /** One expected word heard as two words. */
+  /** One expected word heard as several words. */
   Merge: 4,
   /** Two expected words heard as one word. */
   Split: 5,
@@ -68,7 +83,7 @@ interface AlignOptions {
  * last aligned one are ignored.
  */
 export function alignWords(
-  expected: readonly string[],
+  expected: readonly ExpectedForm[],
   heard: readonly string[],
   { complete = false }: AlignOptions = {},
 ): Alignment {
@@ -77,6 +92,8 @@ export function alignWords(
   const width = n + 1;
   const score = new Float64Array((m + 1) * width);
   const op = new Uint8Array((m + 1) * width);
+  // Heard words taken by a Merge.
+  const takes = new Uint8Array((m + 1) * width);
   const at = (i: number, j: number) => i * width + j;
 
   for (let j = 1; j <= n; j++) {
@@ -90,8 +107,9 @@ export function alignWords(
     for (let j = 1; j <= n; j++) {
       const e = expected[j - 1] ?? "";
       let best =
-        (score[at(i - 1, j - 1)] ?? 0) + pairScore(wordSimilarity(h, e));
+        (score[at(i - 1, j - 1)] ?? 0) + pairScore(formSimilarity(h, e));
       let bestOp: Op = Op.Pair;
+      let bestTake = 1;
 
       const extra = (score[at(i - 1, j)] ?? 0) + EXTRA;
       if (extra > best) [best, bestOp] = [extra, Op.Extra];
@@ -99,16 +117,17 @@ export function alignWords(
       const skip = (score[at(i, j - 1)] ?? 0) + SKIP;
       if (skip > best) [best, bestOp] = [skip, Op.Skip];
 
-      if (i >= 2) {
-        const joined = (heard[i - 2] ?? "") + h;
+      let joinedHeard = h;
+      for (let take = 2; take <= Math.min(MAX_MERGE, i); take++) {
+        joinedHeard = (heard[i - take] ?? "") + joinedHeard;
         const merge =
-          (score[at(i - 2, j - 1)] ?? 0) +
-          pairScore(wordSimilarity(joined, e)) +
-          REGROUP;
-        if (merge > best) [best, bestOp] = [merge, Op.Merge];
+          (score[at(i - take, j - 1)] ?? 0) +
+          pairScore(formSimilarity(joinedHeard, e)) +
+          REGROUP * (take - 1);
+        if (merge > best) [best, bestOp, bestTake] = [merge, Op.Merge, take];
       }
       if (j >= 2) {
-        const joined = (expected[j - 2] ?? "") + e;
+        const joined = primary(expected[j - 2] ?? "") + primary(e);
         const split =
           (score[at(i - 1, j - 2)] ?? 0) +
           2 * pairScore(wordSimilarity(h, joined)) +
@@ -118,6 +137,7 @@ export function alignWords(
 
       score[at(i, j)] = best;
       op[at(i, j)] = bestOp;
+      takes[at(i, j)] = bestTake;
     }
   }
 
@@ -139,9 +159,9 @@ export function alignWords(
   while (j > 0) {
     const step = op[at(i, j)];
     if (step === Op.Pair || step === Op.Merge) {
-      const take = step === Op.Merge ? 2 : 1;
+      const take = step === Op.Merge ? (takes[at(i, j)] ?? 1) : 1;
       const words = heard.slice(i - take, i);
-      const similarity = wordSimilarity(words.join(""), expected[j - 1] ?? "");
+      const similarity = formSimilarity(words.join(""), expected[j - 1] ?? "");
       results[j - 1] = {
         status: similarity >= CORRECT_SIMILARITY ? "correct" : "wrong",
         heard: words.join(" "),
@@ -150,7 +170,8 @@ export function alignWords(
       j -= 1;
     } else if (step === Op.Split) {
       const h = heard[i - 1] ?? "";
-      const joined = (expected[j - 2] ?? "") + (expected[j - 1] ?? "");
+      const joined =
+        primary(expected[j - 2] ?? "") + primary(expected[j - 1] ?? "");
       const status =
         wordSimilarity(h, joined) >= CORRECT_SIMILARITY ? "correct" : "wrong";
       results[j - 1] = { status, heard: h };

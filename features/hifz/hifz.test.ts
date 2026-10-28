@@ -4,6 +4,7 @@ import path from "node:path";
 
 import { alignWords } from "./align";
 import { matchForm, normalizeQuranic, tokenize } from "./normalize";
+import { MUQATTAAT_IDS } from "./muqattaat";
 import { ayahStrength, recordOutcomes, surahStrengths } from "./progress";
 import { SURAHS, surahWords } from "./quran";
 import {
@@ -271,5 +272,64 @@ describe("hifz progress", () => {
       "weak",
       "new",
     ]);
+  });
+});
+
+describe("disconnected letters (muqatta'at)", () => {
+  function recite(surah: number, from: number, to: number, heard: string) {
+    const words = surahWords(load(surah), from, to);
+    return alignWords(expectedForms(words), tokenize(heard), { complete: true })
+      .results;
+  }
+
+  test("are accepted when recited by letter name", () => {
+    expect(recite(2, 1, 1, "الف لام ميم")[0]?.status).toBe("correct");
+    expect(recite(19, 1, 1, "كاف ها يا عين صاد")[0]?.status).toBe("correct");
+    expect(
+      recite(36, 1, 2, "يا سين والقران الحكيم").map((r) => r.status),
+    ).toEqual(["correct", "correct", "correct"]);
+    expect(recite(42, 1, 2, "حا ميم عين سين قاف").map((r) => r.status)).toEqual(
+      ["correct", "correct"],
+    );
+  });
+
+  test("are still accepted as their bare skeleton", () => {
+    expect(recite(2, 1, 1, "الم")[0]?.status).toBe("correct");
+  });
+
+  test("the same skeleton as an ordinary word still matches plainly", () => {
+    expect(
+      recite(105, 1, 1, "الم تر كيف فعل ربك باصحاب الفيل").every(
+        (r) => r.status === "correct",
+      ),
+    ).toBe(true);
+  });
+
+  test("a three-word imla'i spelling matches", () => {
+    const words = surahWords(load(20), 94, 94);
+    const results = alignWords(
+      expectedForms(words),
+      tokenize("قال يا ابن ام لا تاخذ بلحيتي"),
+    ).results;
+    expect(results.slice(0, 3).map((r) => r.status)).toEqual([
+      "correct",
+      "correct",
+      "correct",
+    ]);
+  });
+
+  test("the id list matches every opening letter group in the snapshot", () => {
+    const found = new Set(["20:1:1"]); // طه carries no maddah sign in this script
+    for (let surah = 1; surah <= 114; surah++) {
+      for (const word of surahWords(load(surah), 1, 286)) {
+        if (
+          /\u0653/.test(word.uthmani) &&
+          !/[\u064B-\u0652]/.test(word.uthmani)
+        ) {
+          found.add(word.id);
+        }
+      }
+    }
+    expect([...found].sort()).toEqual([...MUQATTAAT_IDS].sort());
   });
 });

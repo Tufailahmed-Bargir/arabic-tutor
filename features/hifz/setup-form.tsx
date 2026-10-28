@@ -100,8 +100,8 @@ export function SetupForm({
       noValidate
       className="bg-card space-y-5 rounded-2xl border p-4 shadow-sm sm:p-6"
     >
-      <div className="grid gap-4 sm:grid-cols-[1fr_auto_auto]">
-        <div className="space-y-1.5">
+      <div className="grid grid-cols-2 gap-4 sm:grid-cols-[1fr_auto_auto]">
+        <div className="col-span-2 space-y-1.5 sm:col-span-1">
           <label htmlFor="hifz-surah" className="text-sm font-medium">
             Surah
           </label>
